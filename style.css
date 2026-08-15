@@ -349,3 +349,145 @@ footer strong {
         gap: 10px;
     }
 }
+
+/* MEME PAGE */
+
+.meme-page {
+    max-width: 900px;
+    margin: auto;
+    padding: 60px 25px 120px;
+}
+
+.back {
+    display: inline-block;
+
+    margin-bottom: 55px;
+
+    color: var(--muted);
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition: color 0.2s;
+}
+
+.back:hover {
+    color: var(--text);
+}
+
+.meme-detail {
+    max-width: 750px;
+}
+
+.meme-detail .meme-icon {
+    width: 70px;
+    height: 70px;
+
+    font-size: 34px;
+
+    margin-bottom: 25px;
+}
+
+.meme-detail h1 {
+    font-size: clamp(42px, 7vw, 68px);
+    line-height: 1;
+    letter-spacing: -3px;
+
+    margin-bottom: 15px;
+}
+
+.meme-meta {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.meme-description {
+    margin-top: 45px;
+
+    color: #b0b0b5;
+
+    font-size: 17px;
+    line-height: 1.8;
+
+    max-width: 650px;
+}
+
+.meme-info {
+    margin-top: 55px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.info-item {
+    padding: 22px 15px;
+
+    border-right: 1px solid var(--border);
+}
+
+.info-item:last-child {
+    border-right: none;
+}
+
+.info-label {
+    color: var(--subtle);
+
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    margin-bottom: 6px;
+}
+
+.info-value {
+    color: var(--text);
+
+    font-size: 15px;
+}
+
+.rating-box {
+    margin-top: 55px;
+
+    padding: 25px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+}
+
+.rating-box h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.rating-score {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+
+    .meme-page {
+        padding-top: 40px;
+    }
+
+    .meme-detail h1 {
+        letter-spacing: -2px;
+    }
+
+    .meme-info {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+}

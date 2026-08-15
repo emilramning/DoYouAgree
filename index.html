@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>MemeVault</title>
+    <meta
+        name="description"
+        content="MemeVault – upptäck historien, fakta och betyg bakom internetets memes."
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <a href="#" class="logo">MemeVault</a>
+
+    <nav>
+        <a href="#populara">Populära</a>
+        <a href="#alla">Alla memes</a>
+    </nav>
+</header>
+
+
+<main>
+
+    <section class="hero">
+
+        <p class="eyebrow">INTERNET CULTURE ARCHIVE</p>
+
+        <h1>
+            Historien bakom<br>
+            internetets memes.
+        </h1>
+
+        <p class="hero-text">
+            Upptäck memes, lär dig var de kommer ifrån
+            och se vad communityn tycker.
+        </p>
+
+        <div class="search">
+            <span>⌕</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Sök efter ett meme..."
+                autocomplete="off"
+            >
+        </div>
+
+        <button id="randomButton" class="random-button">
+            🎲 Slumpa ett meme
+        </button>
+
+    </section>
+
+
+    <section id="populara" class="section">
+
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">COMMUNITY</p>
+                <h2>Populära memes</h2>
+            </div>
+        </div>
+
+        <div id="popularGrid" class="meme-grid"></div>
+
+    </section>
+
+
+    <section id="alla" class="section">
+
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">ARCHIVE</p>
+                <h2>Alla memes</h2>
+            </div>
+
+            <span id="resultCount" class="result-count"></span>
+        </div>
+
+        <div id="memeGrid" class="meme-grid"></div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <div>
+        <strong>MemeVault</strong>
+        <span>Internetets meme-arkiv.</span>
+    </div>
+
+    <span>© 2026 MemeVault</span>
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

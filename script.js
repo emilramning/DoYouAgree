@@ -1,5 +1,4 @@
 const memes = [
-
     {
         id: "gigachad",
         name: "GigaChad",
@@ -7,7 +6,8 @@ const memes = [
         category: "Reaction",
         year: 2017,
         rating: 9.1,
-        description: "Det överdrivet muskulösa internetfenomenet som blev en symbol för extrem självsäkerhet."
+        description: "GigaChad är ett internetmeme baserat på en extremt muskulös och idealiserad man. Figuren används ofta för att representera överdriven självsäkerhet, styrka och perfektion.",
+        origin: "Internet / sociala medier"
     },
 
     {
@@ -17,7 +17,8 @@ const memes = [
         category: "Internet",
         year: 2007,
         rating: 9.5,
-        description: "Internetets klassiska bait där en oskyldig länk leder till Rick Astleys Never Gonna Give You Up."
+        description: "Rickroll är ett klassiskt internetprank där någon luras att klicka på en länk som leder till Rick Astleys musikvideo till Never Gonna Give You Up.",
+        origin: "4chan / Internet"
     },
 
     {
@@ -27,7 +28,8 @@ const memes = [
         category: "Reaction",
         year: 2010,
         rating: 8.8,
-        description: "En enkel tecknad figur som används för att uttrycka olika känslor och situationer."
+        description: "Wojak är en enkel tecknad figur som används för att uttrycka känslor, situationer och olika typer av internetrelaterad ångest.",
+        origin: "4chan"
     },
 
     {
@@ -37,7 +39,8 @@ const memes = [
         category: "Reaction",
         year: 2005,
         rating: 9.0,
-        description: "Grodan från serietidningen Boy's Club som utvecklades till ett av internets mest kända memeformat."
+        description: "Pepe the Frog skapades av Matt Furie och blev senare ett av internets mest kända memeformat.",
+        origin: "Boy's Club / Internet"
     },
 
     {
@@ -47,7 +50,8 @@ const memes = [
         category: "Animals",
         year: 2010,
         rating: 9.2,
-        description: "En Shiba Inu tillsammans med färgglad text och medvetet dålig grammatik."
+        description: "Doge är ett meme baserat på en Shiba Inu, ofta tillsammans med färgglad text och medvetet felaktig grammatik.",
+        origin: "Tumblr / Reddit"
     },
 
     {
@@ -57,7 +61,8 @@ const memes = [
         category: "Reaction",
         year: 2017,
         rating: 8.7,
-        description: "En meme som används när något ekonomiskt eller logiskt tveksamt presenteras som en fantastisk investering."
+        description: "Stonks används ofta när någon försöker framställa ett ekonomiskt eller logiskt tveksamt beslut som en genial investering.",
+        origin: "Internet"
     },
 
     {
@@ -67,7 +72,8 @@ const memes = [
         category: "Reaction",
         year: 2013,
         rating: 9.3,
-        description: "Hunden som sitter lugnt i ett rum som brinner runt honom. Används när allt uppenbarligen går åt skogen."
+        description: "En hund sitter lugnt i ett rum som brinner runt honom och säger att allt är okej. Memet används när en situation uppenbarligen håller på att gå åt skogen.",
+        origin: "Gunshow"
     },
 
     {
@@ -77,7 +83,8 @@ const memes = [
         category: "Reaction",
         year: 2015,
         rating: 9.0,
-        description: "Två bilder från Drakes musikvideo som används för att jämföra något man ogillar med något man föredrar."
+        description: "Två bilder från Drakes musikvideo används för att jämföra något man inte gillar med något man föredrar.",
+        origin: "Hotline Bling"
     },
 
     {
@@ -87,7 +94,8 @@ const memes = [
         category: "Classic",
         year: 2008,
         rating: 9.1,
-        description: "Det klassiska ansiktet som länge varit en symbol för trolling och internetpranks."
+        description: "Trollface blev en symbol för trolling och internetpranks och är ett av de mest ikoniska tidiga internetmemesen.",
+        origin: "DeviantArt / Rage Comics"
     },
 
     {
@@ -97,7 +105,8 @@ const memes = [
         category: "Reaction",
         year: 2018,
         rating: 8.9,
-        description: "Pikachus förvånade ansikte används när någon blir chockad av ett resultat som egentligen var ganska uppenbart."
+        description: "Pikachus förvånade ansikte används när någon blir chockad över ett resultat som egentligen var ganska uppenbart.",
+        origin: "Pokémon"
     },
 
     {
@@ -107,7 +116,8 @@ const memes = [
         category: "Classic",
         year: 2017,
         rating: 8.6,
-        description: "En serie bilder där idéerna blir allt mer absurda ju mer 'upplyst' personen påstås vara."
+        description: "Ett format där idéerna blir allt mer absurda samtidigt som hjärnan påstås bli mer och mer upplyst.",
+        origin: "Reddit / Internet"
     },
 
     {
@@ -117,7 +127,8 @@ const memes = [
         category: "Gaming",
         year: 2020,
         rating: 8.8,
-        description: "Memes baserade på det sociala deduktionsspelet Among Us och dess ikoniska sus-kultur."
+        description: "Among Us-memes bygger ofta på spelets impostor-mekanik och ordet 'sus', som blev en enorm del av internetkulturen.",
+        origin: "Among Us"
     },
 
     {
@@ -127,7 +138,8 @@ const memes = [
         category: "Animals",
         year: 2019,
         rating: 8.9,
-        description: "En variant av Shiba Inu-memet Doge, ofta med medvetet felstavade ord och extra mycket 'cheems'."
+        description: "Cheems är en variant av Doge som ofta använder medvetet felstavade ord och referenser till cheeseburgare.",
+        origin: "Twitter / Reddit"
     },
 
     {
@@ -137,7 +149,8 @@ const memes = [
         category: "Classic",
         year: 2011,
         rating: 8.5,
-        description: "Den flygande pop-tarten med katt som blev ett av de stora tidiga virala internetmemesen."
+        description: "En flygande katt med en pop-tart-kropp som lämnar ett regnbågsspår efter sig. Ett av de stora tidiga virala internetmemesen.",
+        origin: "YouTube / Internet"
     },
 
     {
@@ -147,9 +160,9 @@ const memes = [
         category: "Internet",
         year: 2013,
         rating: 8.3,
-        description: "Ett viralt videoformat där en person dansar ensam innan scenen plötsligt exploderar i kaos."
+        description: "Ett viralt videoformat där en person börjar dansa ensam innan hela scenen plötsligt förvandlas till totalt kaos.",
+        origin: "YouTube"
     }
-
 ];
 
 
@@ -158,6 +171,7 @@ const popularGrid = document.getElementById("popularGrid");
 const searchInput = document.getElementById("searchInput");
 const resultCount = document.getElementById("resultCount");
 const randomButton = document.getElementById("randomButton");
+const memeContent = document.getElementById("memeContent");
 
 
 function createMemeCard(meme) {
@@ -186,6 +200,8 @@ function createMemeCard(meme) {
 
 function renderMemes(list) {
 
+    if (!memeGrid) return;
+
     if (list.length === 0) {
 
         memeGrid.innerHTML = `
@@ -194,7 +210,10 @@ function renderMemes(list) {
             </div>
         `;
 
-        resultCount.textContent = "0 memes";
+        if (resultCount) {
+            resultCount.textContent = "0 memes";
+        }
+
         return;
     }
 
@@ -202,12 +221,16 @@ function renderMemes(list) {
         .map(createMemeCard)
         .join("");
 
-    resultCount.textContent =
-        `${list.length} meme${list.length === 1 ? "" : "s"}`;
+    if (resultCount) {
+        resultCount.textContent =
+            `${list.length} meme${list.length === 1 ? "" : "s"}`;
+    }
 }
 
 
 function renderPopular() {
+
+    if (!popularGrid) return;
 
     const popular = [...memes]
         .sort((a, b) => b.rating - a.rating)
@@ -219,37 +242,171 @@ function renderPopular() {
 }
 
 
-searchInput.addEventListener("input", () => {
+function loadMemePage() {
 
-    const query = searchInput.value
-        .toLowerCase()
-        .trim();
+    if (!memeContent) return;
 
-    const filtered = memes.filter(meme =>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
 
-        meme.name.toLowerCase().includes(query) ||
+    const meme = memes.find(item => item.id === id);
 
-        meme.category.toLowerCase().includes(query) ||
+    if (!meme) {
 
-        meme.description.toLowerCase().includes(query)
+        memeContent.innerHTML = `
+            <div class="empty">
+                <h2>Memet hittades inte 💀</h2>
+                <p>Den här sidan verkar inte finnas.</p>
+            </div>
+        `;
 
+        return;
+    }
+
+    document.title = `${meme.name} | MemeVault`;
+
+    memeContent.innerHTML = `
+
+        <article class="meme-detail">
+
+            <div class="meme-icon">
+                ${meme.icon}
+            </div>
+
+            <h1>${meme.name}</h1>
+
+            <div class="meme-meta">
+                ${meme.category} · ${meme.year}
+            </div>
+
+            <p class="meme-description">
+                ${meme.description}
+            </p>
+
+
+            <div class="meme-info">
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Ursprung
+                    </div>
+
+                    <div class="info-value">
+                        ${meme.origin}
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <div class="info-label">
+                        År
+                    </div>
+
+                    <div class="info-value">
+                        ${meme.year}
+                    </div>
+                </div>
+
+
+                <div class="info-item">
+                    <div class="info-label">
+                        Community rating
+                    </div>
+
+                    <div class="info-value">
+                        ⭐ ${meme.rating.toFixed(1)} / 10
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="rating-box">
+
+                <h2>
+                    ⭐ Betygsätt memet
+                </h2>
+
+                <p class="rating-score">
+                    Nuvarande betyg: ${meme.rating.toFixed(1)} / 10
+                </p>
+
+                <div class="rating-buttons">
+
+                    ${Array.from({ length: 10 }, (_, i) => `
+                        <button
+                            class="rate-button"
+                            onclick="rateMeme(${i + 1})"
+                        >
+                            ${i + 1}
+                        </button>
+                    `).join("")}
+
+                </div>
+
+            </div>
+
+        </article>
+    `;
+}
+
+
+function rateMeme(score) {
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    const meme = memes.find(item => item.id === id);
+
+    if (!meme) return;
+
+    localStorage.setItem(
+        `rating-${meme.id}`,
+        score
     );
 
-    renderMemes(filtered);
-});
+    alert(`Du gav ${meme.name} ${score}/10 ⭐`);
+}
 
 
-randomButton.addEventListener("click", () => {
+if (searchInput) {
 
-    const randomIndex =
-        Math.floor(Math.random() * memes.length);
+    searchInput.addEventListener("input", () => {
 
-    const randomMeme = memes[randomIndex];
+        const query = searchInput.value
+            .toLowerCase()
+            .trim();
 
-    window.location.href =
-        `meme.html?id=${randomMeme.id}`;
-});
+        const filtered = memes.filter(meme =>
+
+            meme.name.toLowerCase().includes(query) ||
+
+            meme.category.toLowerCase().includes(query) ||
+
+            meme.description.toLowerCase().includes(query)
+
+        );
+
+        renderMemes(filtered);
+    });
+}
+
+
+if (randomButton) {
+
+    randomButton.addEventListener("click", () => {
+
+        const randomIndex =
+            Math.floor(Math.random() * memes.length);
+
+        const randomMeme = memes[randomIndex];
+
+        window.location.href =
+            `meme.html?id=${randomMeme.id}`;
+    });
+}
 
 
 renderMemes(memes);
 renderPopular();
+loadMemePage();

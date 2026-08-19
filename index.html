@@ -3,163 +3,302 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MemeStock — Trade the Memes</title>
-  <meta name="description" content="A virtual stock market for memes. Buy memes, sell memes, and try not to get cooked.">
+
+  <title>MemeStock — The Meme Market</title>
+
+  <meta
+    name="description"
+    content="Trade the internet's biggest memes with virtual currency."
+  >
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app-shell">
+<div class="site">
 
-  <header class="topbar">
+  <!-- HEADER -->
 
-    <a class="brand" href="#">
-      <span class="brand-mark">📈</span>
-      <span>Meme<span>Stock</span></span>
+  <header class="header">
+
+    <a href="#" class="logo">
+      <span class="logo-icon">📈</span>
+      <span>Meme<span class="logo-accent">Stock</span></span>
     </a>
 
-    <nav>
-      <button class="nav-btn active" data-view="market">Market</button>
-      <button class="nav-btn" data-view="portfolio">Portfolio</button>
+    <nav class="navigation">
+
+      <button
+        class="nav-link active"
+        data-page="market">
+        Market
+      </button>
+
+      <button
+        class="nav-link"
+        data-page="portfolio">
+        Portfolio
+      </button>
+
     </nav>
 
-    <div class="cash-pill">
-      💰 <span id="headerCash">$10,000.00</span>
+    <div class="header-account">
+
+      <div class="market-status">
+        <span></span>
+        Market Open
+      </div>
+
+      <div class="cash">
+        <span>Cash</span>
+        <strong id="headerCash">$10,000.00</strong>
+      </div>
+
     </div>
 
   </header>
 
 
+  <!-- MARKET TICKER -->
+
+  <div class="ticker-bar">
+
+    <div class="ticker-track" id="tickerTrack"></div>
+
+  </div>
+
+
   <main>
 
-    <!-- MARKET -->
 
-    <section id="marketView" class="view">
+    <!-- MARKET PAGE -->
+
+    <section
+      id="marketPage"
+      class="page">
 
       <div class="hero">
 
-        <div>
-          <p class="eyebrow">THE MEME EXCHANGE</p>
+        <div class="hero-content">
+
+          <div class="badge">
+            <span></span>
+            LIVE MARKET
+          </div>
 
           <h1>
-            Trade memes.<br>
-            <span>Don't get cooked.</span>
+            Trade the memes
+            <br>
+            <span>before they moon.</span>
           </h1>
 
-          <p class="hero-copy">
-            Build your fake-money portfolio and try to predict which memes are going to the moon.
+          <p>
+            A virtual stock market powered by meme popularity,
+            activity and momentum.
           </p>
+
         </div>
 
-        <div class="hero-card">
 
-          <span>Portfolio value</span>
+        <div class="hero-stat">
 
-          <strong id="heroPortfolio">
+          <span>YOUR PORTFOLIO</span>
+
+          <strong id="heroValue">
             $10,000.00
           </strong>
 
-          <small id="heroPnl">
-            +$0.00 total
-          </small>
+          <div
+            id="heroPnl"
+            class="positive">
+            +$0.00
+          </div>
 
         </div>
 
       </div>
 
 
-      <div class="section-head">
+      <!-- MARKET OVERVIEW -->
 
-        <div>
-          <h2>🔥 Meme Market</h2>
+      <div class="market-overview">
 
-          <p>
-            Prices update automatically based on meme momentum.
-          </p>
+        <div class="overview-card">
+
+          <div class="overview-icon purple">
+            📊
+          </div>
+
+          <div>
+            <span>Market Cap</span>
+            <strong id="marketCap">$798.29</strong>
+          </div>
+
         </div>
 
-        <label class="search">
-          <span>⌕</span>
 
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Search memes..."
-          >
+        <div class="overview-card">
 
-        </label>
+          <div class="overview-icon green">
+            🔥
+          </div>
+
+          <div>
+            <span>Top Gainer</span>
+            <strong id="topGainer">—</strong>
+          </div>
+
+        </div>
+
+
+        <div class="overview-card">
+
+          <div class="overview-icon red">
+            📉
+          </div>
+
+          <div>
+            <span>Top Loser</span>
+            <strong id="topLoser">—</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MARKET -->
+
+      <div class="market-header">
+
+        <div>
+
+          <h2>
+            Meme Market
+          </h2>
+
+          <p>
+            Prices update based on activity and momentum.
+          </p>
+
+        </div>
+
+
+        <div class="market-tools">
+
+          <div class="search">
+
+            <span>⌕</span>
+
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search memes..."
+            >
+
+          </div>
+
+        </div>
 
       </div>
 
 
       <div
-        class="market-grid"
+        class="meme-table"
         id="marketGrid">
       </div>
 
     </section>
 
 
-    <!-- PORTFOLIO -->
+
+    <!-- PORTFOLIO PAGE -->
 
     <section
-      id="portfolioView"
-      class="view hidden">
+      id="portfolioPage"
+      class="page hidden">
 
-      <div class="section-head portfolio-head">
+      <div class="page-title">
 
         <div>
 
-          <p class="eyebrow">
-            YOUR BAG
-          </p>
+          <div class="badge">
+            YOUR ACCOUNT
+          </div>
 
           <h1>
             Portfolio
           </h1>
 
           <p>
-            See whether you're printing or getting absolutely cooked.
+            Track your meme investments.
           </p>
-
-        </div>
-
-
-        <div class="stats">
-
-          <div>
-            <span>Cash</span>
-            <strong id="portfolioCash">
-              $10,000.00
-            </strong>
-          </div>
-
-          <div>
-            <span>Holdings</span>
-            <strong id="portfolioHoldings">
-              $0.00
-            </strong>
-          </div>
-
-          <div>
-            <span>Total</span>
-            <strong id="portfolioTotal">
-              $10,000.00
-            </strong>
-          </div>
 
         </div>
 
       </div>
 
 
-      <div
-        id="portfolioList"
-        class="portfolio-list">
+      <div class="portfolio-stats">
+
+        <div class="big-stat">
+
+          <span>Total value</span>
+
+          <strong id="portfolioTotal">
+            $10,000.00
+          </strong>
+
+        </div>
+
+
+        <div class="big-stat">
+
+          <span>Cash</span>
+
+          <strong id="portfolioCash">
+            $10,000.00
+          </strong>
+
+        </div>
+
+
+        <div class="big-stat">
+
+          <span>Invested</span>
+
+          <strong id="portfolioHoldings">
+            $0.00
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="portfolio-box">
+
+        <div class="portfolio-box-header">
+
+          <h2>
+            Your holdings
+          </h2>
+
+        </div>
+
+        <div
+          id="portfolioList">
+        </div>
+
       </div>
 
     </section>
@@ -169,134 +308,153 @@
 </div>
 
 
+
 <!-- TRADE MODAL -->
 
 <div
-  class="modal hidden"
-  id="tradeModal">
+  id="tradeModal"
+  class="modal hidden">
 
   <div
-    class="modal-backdrop"
+    class="modal-background"
     data-close>
   </div>
 
 
-  <div class="modal-card">
+  <div class="trade-modal">
 
     <button
-      class="close"
+      class="modal-close"
       data-close>
       ×
     </button>
 
 
-    <div
-      id="modalEmoji"
-      class="modal-emoji">
-      🗿
-    </div>
+    <div class="modal-header">
 
-    <p
-      class="eyebrow"
-      id="modalTicker">
-      GIGA
-    </p>
+      <div
+        id="modalEmoji"
+        class="modal-meme-icon">
+        🗿
+      </div>
 
-    <h2 id="modalName">
-      GigaChad
-    </h2>
+      <div>
 
+        <div
+          id="modalTicker"
+          class="ticker-symbol">
+          GIGA
+        </div>
 
-    <div class="modal-price">
+        <h2 id="modalName">
+          GigaChad
+        </h2>
 
-      <strong id="modalPrice">
-        $142.00
-      </strong>
-
-      <span id="modalChange">
-        +0.0%
-      </span>
+      </div>
 
     </div>
 
 
-    <div class="chart-wrap">
+    <div class="modal-price-row">
 
-      <canvas
-        id="priceChart"
-        width="700"
-        height="260">
-      </canvas>
+      <div>
+
+        <strong id="modalPrice">
+          $142.37
+        </strong>
+
+        <span
+          id="modalChange"
+          class="positive">
+          +0.0%
+        </span>
+
+      </div>
+
+      <div class="market-open">
+        ● MARKET OPEN
+      </div>
 
     </div>
 
 
-    <div class="trade-stats">
+    <div class="chart">
+
+      <canvas id="priceChart"></canvas>
+
+    </div>
+
+
+    <div class="activity-grid">
 
       <div>
         <span>Momentum</span>
-
-        <strong id="modalMomentum">
-          +47
-        </strong>
+        <strong id="modalMomentum">+47</strong>
       </div>
 
-
       <div>
-        <span>Shares owned</span>
-
-        <strong id="modalOwned">
-          0
-        </strong>
+        <span>Views</span>
+        <strong id="modalViews">0</strong>
       </div>
 
+      <div>
+        <span>Likes</span>
+        <strong id="modalLikes">0</strong>
+      </div>
 
       <div>
-        <span>Market status</span>
-
-        <strong class="open-status">
-          ● OPEN
-        </strong>
+        <span>Shares</span>
+        <strong id="modalShares">0</strong>
       </div>
 
     </div>
 
 
-    <div class="trade-row">
+    <div class="trade-controls">
 
-      <label>
-        Shares
+      <div class="quantity">
+
+        <label>
+          Shares
+        </label>
 
         <input
           id="shareInput"
           type="number"
           min="1"
-          step="1"
-          value="1">
-      </label>
-
-
-      <div class="trade-actions">
-
-        <button
-          class="buy"
-          id="buyBtn">
-          Buy
-        </button>
-
-        <button
-          class="sell"
-          id="sellBtn">
-          Sell
-        </button>
+          value="1"
+        >
 
       </div>
+
+
+      <button
+        id="buyBtn"
+        class="trade-button buy">
+        Buy
+      </button>
+
+
+      <button
+        id="sellBtn"
+        class="trade-button sell">
+        Sell
+      </button>
 
     </div>
 
 
-    <p class="modal-note">
-      Virtual currency only. No real money is involved.
+    <div class="owned">
+
+      You own
+      <strong id="modalOwned">0</strong>
+      shares
+
+    </div>
+
+
+    <p class="disclaimer">
+      MemeStock uses virtual currency. No real money is involved.
     </p>
 
   </div>
@@ -304,9 +462,10 @@
 </div>
 
 
+
 <div
-  class="toast hidden"
-  id="toast">
+  id="toast"
+  class="toast hidden">
 </div>
 
 

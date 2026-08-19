@@ -1,3 +1,26 @@
+/*
+  MEMESTOCK V2
+  -------------------------
+  Virtual meme stock market.
+
+  The price engine reacts to:
+
+  - Views
+  - Likes
+  - Shares
+  - Favorites
+  - Activity growth
+  - Momentum
+  - Volatility
+
+  This version runs entirely in the browser.
+*/
+
+
+/* =========================
+   MEME DATABASE
+========================= */
+
 const seed = [
 
   {
@@ -6,9 +29,14 @@ const seed = [
     ticker: "GIGA",
     emoji: "🗿",
     price: 142.37,
-    base: 142.37,
-    momentum: 47,
-    vol: 0.018
+
+    views: 84200,
+    likes: 12400,
+    shares: 5900,
+    favorites: 2100,
+
+    momentum: 72,
+    volatility: 0.018
   },
 
   {
@@ -17,9 +45,14 @@ const seed = [
     ticker: "PEPE",
     emoji: "🐸",
     price: 97.21,
-    base: 97.21,
-    momentum: 31,
-    vol: 0.022
+
+    views: 71200,
+    likes: 10300,
+    shares: 4100,
+    favorites: 1900,
+
+    momentum: 54,
+    volatility: 0.021
   },
 
   {
@@ -28,9 +61,14 @@ const seed = [
     ticker: "DOGE",
     emoji: "🐕",
     price: 81.53,
-    base: 81.53,
-    momentum: 18,
-    vol: 0.015
+
+    views: 65400,
+    likes: 9100,
+    shares: 3200,
+    favorites: 1500,
+
+    momentum: 32,
+    volatility: 0.015
   },
 
   {
@@ -39,9 +77,14 @@ const seed = [
     ticker: "WOJAK",
     emoji: "😭",
     price: 54.18,
-    base: 54.18,
-    momentum: -24,
-    vol: 0.028
+
+    views: 28900,
+    likes: 3600,
+    shares: 900,
+    favorites: 600,
+
+    momentum: -25,
+    volatility: 0.028
   },
 
   {
@@ -50,9 +93,14 @@ const seed = [
     ticker: "TROLL",
     emoji: "😈",
     price: 72.44,
-    base: 72.44,
-    momentum: 12,
-    vol: 0.021
+
+    views: 48100,
+    likes: 6700,
+    shares: 1800,
+    favorites: 1100,
+
+    momentum: 21,
+    volatility: 0.021
   },
 
   {
@@ -61,9 +109,14 @@ const seed = [
     ticker: "STONK",
     emoji: "📈",
     price: 118.82,
-    base: 118.82,
-    momentum: 39,
-    vol: 0.017
+
+    views: 60200,
+    likes: 8200,
+    shares: 3400,
+    favorites: 1700,
+
+    momentum: 61,
+    volatility: 0.017
   },
 
   {
@@ -72,9 +125,14 @@ const seed = [
     ticker: "SMURF",
     emoji: "🔵",
     price: 31.06,
-    base: 31.06,
-    momentum: -31,
-    vol: 0.034
+
+    views: 11400,
+    likes: 1200,
+    shares: 220,
+    favorites: 150,
+
+    momentum: -52,
+    volatility: 0.034
   },
 
   {
@@ -83,9 +141,14 @@ const seed = [
     ticker: "BRAIN",
     emoji: "🧠",
     price: 89.60,
-    base: 89.60,
-    momentum: 26,
-    vol: 0.020
+
+    views: 52400,
+    likes: 7200,
+    shares: 2500,
+    favorites: 1300,
+
+    momentum: 43,
+    volatility: 0.020
   },
 
   {
@@ -94,9 +157,14 @@ const seed = [
     ticker: "NPC",
     emoji: "🤖",
     price: 44.73,
-    base: 44.73,
-    momentum: -9,
-    vol: 0.025
+
+    views: 24800,
+    likes: 2900,
+    shares: 700,
+    favorites: 420,
+
+    momentum: -7,
+    volatility: 0.025
   },
 
   {
@@ -105,56 +173,95 @@ const seed = [
     ticker: "CAPY",
     emoji: "🦫",
     price: 66.35,
-    base: 66.35,
-    momentum: 22,
-    vol: 0.019
+
+    views: 45800,
+    likes: 6400,
+    shares: 2100,
+    favorites: 1200,
+
+    momentum: 38,
+    volatility: 0.019
   }
 
 ];
 
 
+/* =========================
+   STATE
+========================= */
+
 let market =
   JSON.parse(
-    localStorage.getItem("memestock_market")
-  ) ||
-
-  seed.map(m => ({
-    ...m,
-
-    history: Array.from(
-      { length: 30 },
-
-      (_, i) =>
-        m.price *
-        (
-          0.94 +
-          i * 0.002 +
-          Math.random() * 0.05
-        )
+    localStorage.getItem(
+      "memestock_market_v2"
     )
-  }));
+  );
+
+
+if (!market) {
+
+  market =
+    seed.map(meme => ({
+
+      ...meme,
+
+      basePrice:
+        meme.price,
+
+      previousViews:
+        meme.views,
+
+      previousLikes:
+        meme.likes,
+
+      previousShares:
+        meme.shares,
+
+      previousFavorites:
+        meme.favorites,
+
+      history:
+        createHistory(
+          meme.price
+        )
+
+    }));
+
+}
 
 
 let portfolio =
   JSON.parse(
-    localStorage.getItem("memestock_portfolio")
-  ) ||
+    localStorage.getItem(
+      "memestock_portfolio_v2"
+    )
+  );
 
-  {
+
+if (!portfolio) {
+
+  portfolio = {
+
     cash: 10000,
+
     holdings: {}
+
   };
 
+}
 
-let selected = null;
+
+let selectedMeme = null;
 
 
-/* HELPERS */
+/* =========================
+   HELPERS
+========================= */
 
-function money(number) {
+function money(value) {
 
   return "$" +
-    number.toLocaleString(
+    value.toLocaleString(
       "en-US",
       {
         minimumFractionDigits: 2,
@@ -165,13 +272,40 @@ function money(number) {
 }
 
 
-function percent(number) {
+function percent(value) {
 
   return (
-    number >= 0 ? "+" : ""
+    value >= 0
+      ? "+"
+      : ""
   ) +
-  number.toFixed(1) +
+  value.toFixed(1) +
   "%";
+
+}
+
+
+function compactNumber(value) {
+
+  if (value >= 1000000) {
+
+    return (
+      value / 1000000
+    ).toFixed(1) + "M";
+
+  }
+
+
+  if (value >= 1000) {
+
+    return (
+      value / 1000
+    ).toFixed(1) + "K";
+
+  }
+
+
+  return Math.round(value);
 
 }
 
@@ -179,19 +313,366 @@ function percent(number) {
 function save() {
 
   localStorage.setItem(
-    "memestock_market",
+    "memestock_market_v2",
     JSON.stringify(market)
   );
 
   localStorage.setItem(
-    "memestock_portfolio",
+    "memestock_portfolio_v2",
     JSON.stringify(portfolio)
   );
 
 }
 
 
-/* PORTFOLIO */
+function createHistory(price) {
+
+  const history = [];
+
+  let current = price * 0.9;
+
+
+  for (
+    let i = 0;
+    i < 50;
+    i++
+  ) {
+
+    current *=
+      1 +
+      (
+        Math.random() -
+        0.45
+      ) * 0.02;
+
+
+    history.push(current);
+
+  }
+
+
+  history.push(price);
+
+  return history;
+
+}
+
+
+/* =========================
+   ACTIVITY SCORE
+========================= */
+
+function calculateMomentum(meme) {
+
+  /*
+    Each activity type has a different
+    importance.
+
+    Shares are especially powerful because
+    they represent virality.
+  */
+
+
+  const viewScore =
+    Math.log10(
+      meme.views + 1
+    ) * 4;
+
+
+  const likeRatio =
+    meme.likes /
+    Math.max(
+      meme.views,
+      1
+    );
+
+
+  const shareRatio =
+    meme.shares /
+    Math.max(
+      meme.views,
+      1
+    );
+
+
+  const favoriteRatio =
+    meme.favorites /
+    Math.max(
+      meme.views,
+      1
+    );
+
+
+  const engagementScore =
+    likeRatio * 500 +
+    shareRatio * 1200 +
+    favoriteRatio * 700;
+
+
+  /*
+    Activity growth.
+  */
+
+  const viewGrowth =
+    (
+      meme.views -
+      meme.previousViews
+    ) /
+    Math.max(
+      meme.previousViews,
+      1
+    );
+
+
+  const shareGrowth =
+    (
+      meme.shares -
+      meme.previousShares
+    ) /
+    Math.max(
+      meme.previousShares,
+      1
+    );
+
+
+  const growthScore =
+    viewGrowth * 120 +
+    shareGrowth * 160;
+
+
+  /*
+    Final momentum.
+  */
+
+  let score =
+    viewScore +
+    engagementScore +
+    growthScore;
+
+
+  /*
+    Normalize it.
+
+    This keeps the score between
+    -100 and +100.
+  */
+
+  score =
+    Math.max(
+      -100,
+      Math.min(
+        100,
+        score - 45
+      )
+    );
+
+
+  return score;
+
+}
+
+
+/* =========================
+   PRICE ENGINE
+========================= */
+
+function updatePrices() {
+
+  market.forEach(
+    meme => {
+
+      /*
+        Recalculate popularity.
+      */
+
+      const newMomentum =
+        calculateMomentum(
+          meme
+        );
+
+
+      /*
+        Smooth momentum so prices
+        don't instantly flip.
+      */
+
+      meme.momentum =
+        meme.momentum * 0.7 +
+        newMomentum * 0.3;
+
+
+      /*
+        Momentum creates buying
+        or selling pressure.
+      */
+
+      const momentumPressure =
+        meme.momentum /
+        6000;
+
+
+      /*
+        Natural market randomness.
+      */
+
+      const randomMovement =
+        (
+          Math.random() -
+          0.5
+        ) *
+        meme.volatility;
+
+
+      /*
+        Final price movement.
+      */
+
+      const movement =
+        momentumPressure +
+        randomMovement;
+
+
+      meme.price =
+        Math.max(
+          0.01,
+          meme.price *
+          (1 + movement)
+        );
+
+
+      /*
+        Simulate natural activity.
+
+        This is temporary until
+        the website has real users.
+      */
+
+      const hype =
+        Math.max(
+          0,
+          meme.momentum
+        ) / 100;
+
+
+      const decline =
+        Math.max(
+          0,
+          -meme.momentum
+        ) / 100;
+
+
+      meme.views +=
+        Math.round(
+          Math.random() *
+          (
+            20 +
+            hype * 120
+          )
+        );
+
+
+      meme.likes +=
+        Math.round(
+          Math.random() *
+          (
+            2 +
+            hype * 12
+          )
+        );
+
+
+      meme.shares +=
+        Math.round(
+          Math.random() *
+          (
+            1 +
+            hype * 7
+          )
+        );
+
+
+      meme.favorites +=
+        Math.round(
+          Math.random() *
+          (
+            1 +
+            hype * 4
+          )
+        );
+
+
+      /*
+        Occasionally create
+        viral spikes.
+      */
+
+      if (
+        Math.random() < 0.025
+      ) {
+
+        meme.views *=
+          1.08;
+
+        meme.shares *=
+          1.12;
+
+        meme.momentum =
+          Math.min(
+            100,
+            meme.momentum + 12
+          );
+
+      }
+
+
+      /*
+        Store history.
+      */
+
+      meme.history.push(
+        meme.price
+      );
+
+
+      if (
+        meme.history.length > 80
+      ) {
+
+        meme.history.shift();
+
+      }
+
+
+      /*
+        Update previous stats.
+      */
+
+      meme.previousViews =
+        meme.views;
+
+      meme.previousLikes =
+        meme.likes;
+
+      meme.previousShares =
+        meme.shares;
+
+      meme.previousFavorites =
+        meme.favorites;
+
+    }
+  );
+
+
+  save();
+
+  renderEverything();
+
+}
+
+
+/* =========================
+   PORTFOLIO
+========================= */
 
 function holdingsValue() {
 
@@ -207,12 +688,14 @@ function holdingsValue() {
           m => m.id === id
         );
 
+
+      if (!meme)
+        return total;
+
+
       return total +
-        (
-          meme
-            ? meme.price * quantity
-            : 0
-        );
+        meme.price *
+        quantity;
 
     },
 
@@ -222,7 +705,7 @@ function holdingsValue() {
 }
 
 
-function totalValue() {
+function portfolioValue() {
 
   return (
     portfolio.cash +
@@ -232,54 +715,87 @@ function totalValue() {
 }
 
 
-/* MARKET */
+/* =========================
+   MARKET RENDER
+========================= */
 
-function renderMarket(filter = "") {
+function renderMarket(
+  search = ""
+) {
 
-  const grid =
+  const container =
     document.getElementById(
       "marketGrid"
     );
 
 
-  const memes =
-    market.filter(meme => {
+  const filtered =
+    market.filter(
+      meme => {
 
-      const search =
-        (
-          meme.name +
-          " " +
-          meme.ticker
-        )
-        .toLowerCase();
-
-      return search.includes(
-        filter.toLowerCase()
-      );
-
-    });
+        const text =
+          (
+            meme.name +
+            " " +
+            meme.ticker
+          ).toLowerCase();
 
 
-  grid.innerHTML =
-    memes.map(meme => {
+        return text.includes(
+          search.toLowerCase()
+        );
+
+      }
+    );
+
+
+  /*
+    Sort strongest momentum first.
+  */
+
+  filtered.sort(
+    (a,b) =>
+      b.momentum -
+      a.momentum
+  );
+
+
+  let html = `
+
+    <div class="meme-row table-head">
+
+      <div>MEME</div>
+      <div>PRICE</div>
+      <div>24H</div>
+      <div>ACTIVITY</div>
+      <div></div>
+
+    </div>
+
+  `;
+
+
+  filtered.forEach(
+    meme => {
 
       const change =
         (
-          (meme.price - meme.base) /
-          meme.base
-        ) * 100;
+          meme.price -
+          meme.basePrice
+        ) /
+        meme.basePrice *
+        100;
 
 
-      return `
+      html += `
 
-        <article class="meme-card">
+        <div class="meme-row">
 
-          <div class="meme-top">
+          <div class="meme-info">
 
-            <div class="meme-emoji">
+            <div class="meme-icon">
               ${meme.emoji}
             </div>
-
 
             <div>
 
@@ -287,97 +803,218 @@ function renderMarket(filter = "") {
                 ${meme.name}
               </div>
 
-              <div class="ticker">
+              <div class="symbol">
                 ${meme.ticker}
               </div>
 
             </div>
 
+          </div>
 
-            <div class="card-price">
 
-              <strong>
-                ${money(meme.price)}
-              </strong>
+          <div class="price">
 
-              <span
-                class="change ${
-                  change >= 0
-                    ? "up"
-                    : "down"
-                }">
-
-                ${percent(change)}
-
-              </span>
-
-            </div>
+            ${money(meme.price)}
 
           </div>
 
 
-          <div class="card-bottom">
+          <div
+            class="
+              change
+              ${
+                change >= 0
+                  ? "positive"
+                  : "negative"
+              }
+            ">
 
-            <span>
-              Momentum ${
-                meme.momentum >= 0
-                  ? "+"
-                  : ""
-              }${meme.momentum}
-            </span>
+            ${percent(change)}
 
+          </div>
+
+
+          <div class="metric">
+
+            🔥 ${
+              Math.round(
+                meme.momentum
+              )
+            }
+
+          </div>
+
+
+          <div>
 
             <button
-              class="trade-btn"
-              onclick="openTrade('${meme.id}')">
+              class="trade"
+              onclick="
+                openTrade('${meme.id}')
+              ">
 
-              Trade →
+              Trade
 
             </button>
 
           </div>
 
-        </article>
+        </div>
 
       `;
 
-    }).join("");
+    }
+  );
+
+
+  container.innerHTML =
+    html;
 
 }
 
 
-/* PORTFOLIO UI */
+/* =========================
+   TICKER
+========================= */
+
+function renderTicker() {
+
+  const container =
+    document.getElementById(
+      "tickerTrack"
+    );
+
+
+  container.innerHTML =
+    market.map(
+      meme => {
+
+        const change =
+          (
+            meme.price -
+            meme.basePrice
+          ) /
+          meme.basePrice *
+          100;
+
+
+        return `
+
+          <div class="ticker-item">
+
+            <strong>
+              ${meme.ticker}
+            </strong>
+
+            <span
+              class="
+                ${
+                  change >= 0
+                    ? "positive"
+                    : "negative"
+                }
+              ">
+
+              ${money(meme.price)}
+              ${percent(change)}
+
+            </span>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+/* =========================
+   MARKET OVERVIEW
+========================= */
+
+function renderOverview() {
+
+  const totalMarketCap =
+    market.reduce(
+      (sum,meme) =>
+        sum + meme.price,
+      0
+    );
+
+
+  document.getElementById(
+    "marketCap"
+  ).textContent =
+    money(
+      totalMarketCap
+    );
+
+
+  const sorted =
+    [...market].sort(
+      (a,b) => {
+
+        const aChange =
+          (
+            a.price -
+            a.basePrice
+          ) /
+          a.basePrice;
+
+
+        const bChange =
+          (
+            b.price -
+            b.basePrice
+          ) /
+          b.basePrice;
+
+
+        return (
+          bChange -
+          aChange
+        );
+
+      }
+    );
+
+
+  document.getElementById(
+    "topGainer"
+  ).textContent =
+    sorted[0].name;
+
+
+  document.getElementById(
+    "topLoser"
+  ).textContent =
+    sorted[
+      sorted.length - 1
+    ].name;
+
+}
+
+
+/* =========================
+   PORTFOLIO UI
+========================= */
 
 function renderPortfolio() {
 
   const holdings =
     holdingsValue();
 
+
   const total =
-    totalValue();
-
-  const pnl =
-    total - 10000;
+    portfolioValue();
 
 
   document.getElementById(
-    "headerCash"
-  ).textContent =
-    money(portfolio.cash);
-
-
-  document.getElementById(
-    "heroPortfolio"
+    "portfolioTotal"
   ).textContent =
     money(total);
-
-
-  document.getElementById(
-    "heroPnl"
-  ).textContent =
-    (pnl >= 0 ? "+" : "") +
-    money(pnl) +
-    " total";
 
 
   document.getElementById(
@@ -393,54 +1030,126 @@ function renderPortfolio() {
 
 
   document.getElementById(
-    "portfolioTotal"
+    "headerCash"
+  ).textContent =
+    money(portfolio.cash);
+
+
+  document.getElementById(
+    "heroValue"
   ).textContent =
     money(total);
 
 
-  const rows =
+  const pnl =
+    total - 10000;
+
+
+  const pnlElement =
+    document.getElementById(
+      "heroPnl"
+    );
+
+
+  pnlElement.textContent =
+    (
+      pnl >= 0
+        ? "+"
+        : ""
+    ) +
+    money(pnl);
+
+
+  pnlElement.className =
+    pnl >= 0
+      ? "positive"
+      : "negative";
+
+
+  const container =
+    document.getElementById(
+      "portfolioList"
+    );
+
+
+  const positions =
     Object.entries(
       portfolio.holdings
     )
-
     .filter(
-      ([, quantity]) =>
+      ([,quantity]) =>
         quantity > 0
-    )
+    );
 
-    .map(
-      ([id, quantity]) => {
+
+  if (
+    positions.length === 0
+  ) {
+
+    container.innerHTML = `
+
+      <div class="empty">
+
+        You don't own any memes yet. 🗿
+
+        <br><br>
+
+        Head over to the market
+        and make your first trade.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    positions.map(
+      ([id,quantity]) => {
 
         const meme =
           market.find(
             m => m.id === id
           );
 
+
         const value =
-          quantity *
-          meme.price;
+          meme.price *
+          quantity;
 
 
         const change =
           (
-            (meme.price - meme.base) /
-            meme.base
-          ) * 100;
+            meme.price -
+            meme.basePrice
+          ) /
+          meme.basePrice *
+          100;
 
 
         return `
 
           <div class="portfolio-row">
 
-            <div>
+            <div class="meme-info">
 
-              <b>
+              <div class="meme-icon">
                 ${meme.emoji}
-                ${meme.name}
-              </b>
+              </div>
 
-              <div class="ticker">
-                ${meme.ticker}
+              <div>
+
+                <div class="meme-name">
+                  ${meme.name}
+                </div>
+
+                <div class="symbol">
+                  ${meme.ticker}
+                </div>
+
               </div>
 
             </div>
@@ -456,11 +1165,14 @@ function renderPortfolio() {
             </div>
 
 
-            <div class="${
-              change >= 0
-                ? "up"
-                : "down"
-            }">
+            <div
+              class="
+                ${
+                  change >= 0
+                    ? "positive"
+                    : "negative"
+                }
+              ">
 
               ${percent(change)}
 
@@ -471,33 +1183,157 @@ function renderPortfolio() {
         `;
 
       }
-    );
-
-
-  document.getElementById(
-    "portfolioList"
-  ).innerHTML =
-
-    rows.length
-
-      ? rows.join("")
-
-      : `
-
-        <div class="empty">
-
-          Your portfolio is empty.<br>
-
-          Go buy some memes. 🗿
-
-        </div>
-
-      `;
+    ).join("");
 
 }
 
 
-/* CHART */
+/* =========================
+   TRADE MODAL
+========================= */
+
+window.openTrade =
+function(id) {
+
+  selectedMeme =
+    market.find(
+      meme =>
+        meme.id === id
+    );
+
+
+  document.getElementById(
+    "tradeModal"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  updateModal();
+
+};
+
+
+function updateModal() {
+
+  if (!selectedMeme)
+    return;
+
+
+  const meme =
+    market.find(
+      m =>
+        m.id ===
+        selectedMeme.id
+    );
+
+
+  selectedMeme =
+    meme;
+
+
+  document.getElementById(
+    "modalEmoji"
+  ).textContent =
+    meme.emoji;
+
+
+  document.getElementById(
+    "modalTicker"
+  ).textContent =
+    meme.ticker;
+
+
+  document.getElementById(
+    "modalName"
+  ).textContent =
+    meme.name;
+
+
+  document.getElementById(
+    "modalPrice"
+  ).textContent =
+    money(meme.price);
+
+
+  const change =
+    (
+      meme.price -
+      meme.basePrice
+    ) /
+    meme.basePrice *
+    100;
+
+
+  const changeElement =
+    document.getElementById(
+      "modalChange"
+    );
+
+
+  changeElement.textContent =
+    percent(change);
+
+
+  changeElement.className =
+    change >= 0
+      ? "positive"
+      : "negative";
+
+
+  document.getElementById(
+    "modalMomentum"
+  ).textContent =
+    (
+      meme.momentum >= 0
+        ? "+"
+        : ""
+    ) +
+    Math.round(
+      meme.momentum
+    );
+
+
+  document.getElementById(
+    "modalViews"
+  ).textContent =
+    compactNumber(
+      meme.views
+    );
+
+
+  document.getElementById(
+    "modalLikes"
+  ).textContent =
+    compactNumber(
+      meme.likes
+    );
+
+
+  document.getElementById(
+    "modalShares"
+  ).textContent =
+    compactNumber(
+      meme.shares
+    );
+
+
+  document.getElementById(
+    "modalOwned"
+  ).textContent =
+    portfolio.holdings[
+      meme.id
+    ] || 0;
+
+
+  drawChart(meme);
+
+}
+
+
+/* =========================
+   CHART
+========================= */
 
 function drawChart(meme) {
 
@@ -506,46 +1342,56 @@ function drawChart(meme) {
       "priceChart"
     );
 
-  const ctx =
+
+  const context =
     canvas.getContext("2d");
 
 
-  const dpr =
-    window.devicePixelRatio || 1;
+  const ratio =
+    window.devicePixelRatio ||
+    1;
 
 
   canvas.width =
-    canvas.clientWidth * dpr;
+    canvas.clientWidth *
+    ratio;
+
 
   canvas.height =
-    canvas.clientHeight * dpr;
+    canvas.clientHeight *
+    ratio;
 
 
-  ctx.scale(dpr, dpr);
+  context.scale(
+    ratio,
+    ratio
+  );
 
 
   const width =
     canvas.clientWidth;
+
 
   const height =
     canvas.clientHeight;
 
 
   const values =
-    meme.history || [meme.price];
+    meme.history;
 
 
-  const min =
+  const minimum =
     Math.min(...values);
 
-  const max =
+
+  const maximum =
     Math.max(...values);
 
 
   const padding = 18;
 
 
-  ctx.clearRect(
+  context.clearRect(
     0,
     0,
     width,
@@ -553,12 +1399,14 @@ function drawChart(meme) {
   );
 
 
-  /* GRID */
+  /*
+    Grid.
+  */
 
-  ctx.strokeStyle =
-    "#1d2735";
+  context.strokeStyle =
+    "#18202c";
 
-  ctx.lineWidth = 1;
+  context.lineWidth = 1;
 
 
   for (
@@ -576,34 +1424,38 @@ function drawChart(meme) {
       ) / 4;
 
 
-    ctx.beginPath();
+    context.beginPath();
 
-    ctx.moveTo(
+    context.moveTo(
       0,
       y
     );
 
-    ctx.lineTo(
+    context.lineTo(
       width,
       y
     );
 
-    ctx.stroke();
+    context.stroke();
 
   }
 
 
-  /* LINE */
+  /*
+    Price line.
+  */
 
-  ctx.beginPath();
+  context.beginPath();
 
 
   values.forEach(
-    (value, index) => {
+    (value,index) => {
 
       const x =
         index /
-        (values.length - 1) *
+        (
+          values.length - 1
+        ) *
         width;
 
 
@@ -612,8 +1464,15 @@ function drawChart(meme) {
         padding -
 
         (
-          (value - min) /
-          (max - min || 1)
+          (
+            value -
+            minimum
+          ) /
+          (
+            maximum -
+            minimum ||
+            1
+          )
         ) *
 
         (
@@ -622,13 +1481,21 @@ function drawChart(meme) {
         );
 
 
-      if (index === 0) {
+      if (
+        index === 0
+      ) {
 
-        ctx.moveTo(x, y);
+        context.moveTo(
+          x,
+          y
+        );
 
       } else {
 
-        ctx.lineTo(x, y);
+        context.lineTo(
+          x,
+          y
+        );
 
       }
 
@@ -636,138 +1503,34 @@ function drawChart(meme) {
   );
 
 
-  ctx.strokeStyle =
-    meme.price >= meme.base
+  context.strokeStyle =
+    meme.price >=
+    meme.basePrice
       ? "#35d07f"
-      : "#ff5c70";
-
-  ctx.lineWidth = 3;
-
-  ctx.stroke();
-
-}
+      : "#ff5b6e";
 
 
-/* OPEN TRADE */
+  context.lineWidth = 2.5;
 
-window.openTrade =
-  function(id) {
-
-    selected =
-      market.find(
-        meme => meme.id === id
-      );
-
-
-    document.getElementById(
-      "modalEmoji"
-    ).textContent =
-      selected.emoji;
-
-
-    document.getElementById(
-      "modalTicker"
-    ).textContent =
-      selected.ticker;
-
-
-    document.getElementById(
-      "modalName"
-    ).textContent =
-      selected.name;
-
-
-    document.getElementById(
-      "tradeModal"
-    ).classList.remove(
-      "hidden"
-    );
-
-
-    updateModal();
-
-  };
-
-
-/* UPDATE MODAL */
-
-function updateModal() {
-
-  if (!selected)
-    return;
-
-
-  const meme =
-    market.find(
-      m => m.id === selected.id
-    );
-
-
-  selected = meme;
-
-
-  document.getElementById(
-    "modalPrice"
-  ).textContent =
-    money(meme.price);
-
-
-  const change =
-    (
-      (meme.price - meme.base) /
-      meme.base
-    ) * 100;
-
-
-  const changeElement =
-    document.getElementById(
-      "modalChange"
-    );
-
-
-  changeElement.textContent =
-    percent(change);
-
-
-  changeElement.className =
-    change >= 0
-      ? "up"
-      : "down";
-
-
-  document.getElementById(
-    "modalMomentum"
-  ).textContent =
-    (
-      meme.momentum >= 0
-        ? "+"
-        : ""
-    ) +
-    Math.round(
-      meme.momentum
-    );
-
-
-  document.getElementById(
-    "modalOwned"
-  ).textContent =
-    portfolio.holdings[
-      meme.id
-    ] || 0;
-
-
-  drawChart(meme);
+  context.stroke();
 
 }
 
 
-/* BUY / SELL */
+/* =========================
+   TRADING
+========================= */
 
 function trade(type) {
+
+  if (!selectedMeme)
+    return;
+
 
   const quantity =
     Math.max(
       1,
+
       Math.floor(
         Number(
           document.getElementById(
@@ -778,28 +1541,40 @@ function trade(type) {
     );
 
 
+  const meme =
+    market.find(
+      m =>
+        m.id ===
+        selectedMeme.id
+    );
+
+
   const cost =
-    quantity *
-    selected.price;
+    meme.price *
+    quantity;
 
 
   const owned =
     portfolio.holdings[
-      selected.id
+      meme.id
     ] || 0;
 
 
-  /* BUY */
+  /*
+    BUY
+  */
 
-  if (type === "buy") {
+  if (
+    type === "buy"
+  ) {
 
     if (
       cost >
       portfolio.cash
     ) {
 
-      toast(
-        "You're too broke for that 💀"
+      showToast(
+        "Not enough cash 💀"
       );
 
       return;
@@ -807,23 +1582,47 @@ function trade(type) {
     }
 
 
-    portfolio.cash -= cost;
+    portfolio.cash -=
+      cost;
 
 
     portfolio.holdings[
-      selected.id
+      meme.id
     ] =
-      owned + quantity;
+      owned +
+      quantity;
 
 
-    toast(
-      `Bought ${quantity} ${selected.name} shares 📈`
+    /*
+      Buying creates a tiny
+      activity boost.
+    */
+
+    meme.shares +=
+      quantity;
+
+
+    meme.momentum =
+      Math.min(
+        100,
+        meme.momentum +
+        Math.min(
+          5,
+          quantity * 0.05
+        )
+      );
+
+
+    showToast(
+      `Bought ${quantity} ${meme.name} shares 📈`
     );
 
   }
 
 
-  /* SELL */
+  /*
+    SELL
+  */
 
   else {
 
@@ -832,7 +1631,7 @@ function trade(type) {
       owned
     ) {
 
-      toast(
+      showToast(
         "You don't own enough shares 😭"
       );
 
@@ -841,17 +1640,19 @@ function trade(type) {
     }
 
 
-    portfolio.cash += cost;
+    portfolio.cash +=
+      cost;
 
 
     portfolio.holdings[
-      selected.id
+      meme.id
     ] =
-      owned - quantity;
+      owned -
+      quantity;
 
 
-    toast(
-      `Sold ${quantity} ${selected.name} shares 💰`
+    showToast(
+      `Sold ${quantity} ${meme.name} shares`
     );
 
   }
@@ -859,130 +1660,46 @@ function trade(type) {
 
   save();
 
-  renderMarket(
-    document.getElementById(
-      "searchInput"
-    ).value
-  );
-
-  renderPortfolio();
+  renderEverything();
 
   updateModal();
 
 }
 
 
-/* MARKET SIMULATION */
+/* =========================
+   TOAST
+========================= */
 
-function updateMarket() {
+function showToast(
+  message
+) {
 
-  market.forEach(
-    meme => {
-
-      const momentumBias =
-        meme.momentum /
-        10000;
-
-
-      const randomNoise =
-        (
-          Math.random() -
-          0.5
-        ) *
-        meme.vol;
-
-
-      const movement =
-        momentumBias +
-        randomNoise;
-
-
-      meme.price =
-        Math.max(
-          0.01,
-          meme.price *
-          (1 + movement)
-        );
-
-
-      meme.history.push(
-        meme.price
-      );
-
-
-      if (
-        meme.history.length >
-        50
-      ) {
-
-        meme.history.shift();
-
-      }
-
-
-      meme.momentum =
-        Math.max(
-          -100,
-
-          Math.min(
-            100,
-
-            meme.momentum +
-            (
-              Math.random() -
-              0.5
-            ) * 4
-          )
-        );
-
-    }
-  );
-
-
-  save();
-
-  renderMarket(
-    document.getElementById(
-      "searchInput"
-    ).value
-  );
-
-  renderPortfolio();
-
-  updateModal();
-
-}
-
-
-/* TOAST */
-
-function toast(message) {
-
-  const element =
+  const toast =
     document.getElementById(
       "toast"
     );
 
 
-  element.textContent =
+  toast.textContent =
     message;
 
 
-  element.classList.remove(
+  toast.classList.remove(
     "hidden"
   );
 
 
   clearTimeout(
-    window.toastTimer
+    window.toastTimeout
   );
 
 
-  window.toastTimer =
+  window.toastTimeout =
     setTimeout(
       () => {
 
-        element.classList.add(
+        toast.classList.add(
           "hidden"
         );
 
@@ -994,11 +1711,13 @@ function toast(message) {
 }
 
 
-/* NAVIGATION */
+/* =========================
+   NAVIGATION
+========================= */
 
 document
   .querySelectorAll(
-    ".nav-btn"
+    ".nav-link"
   )
   .forEach(
     button => {
@@ -1008,11 +1727,11 @@ document
 
           document
             .querySelectorAll(
-              ".nav-btn"
+              ".nav-link"
             )
             .forEach(
-              b =>
-                b.classList.remove(
+              item =>
+                item.classList.remove(
                   "active"
                 )
             );
@@ -1025,22 +1744,24 @@ document
 
           document
             .getElementById(
-              "marketView"
+              "marketPage"
             )
             .classList.toggle(
               "hidden",
-              button.dataset.view !==
+
+              button.dataset.page !==
               "market"
             );
 
 
           document
             .getElementById(
-              "portfolioView"
+              "portfolioPage"
             )
             .classList.toggle(
               "hidden",
-              button.dataset.view !==
+
+              button.dataset.page !==
               "portfolio"
             );
 
@@ -1050,7 +1771,9 @@ document
   );
 
 
-/* SEARCH */
+/* =========================
+   SEARCH
+========================= */
 
 document
   .getElementById(
@@ -1058,14 +1781,19 @@ document
   )
   .addEventListener(
     "input",
-    event =>
+    event => {
+
       renderMarket(
         event.target.value
-      )
+      );
+
+    }
   );
 
 
-/* CLOSE MODAL */
+/* =========================
+   MODAL CLOSE
+========================= */
 
 document
   .querySelectorAll(
@@ -1091,14 +1819,17 @@ document
   );
 
 
-/* BUTTONS */
+/* =========================
+   TRADE BUTTONS
+========================= */
 
 document
   .getElementById(
     "buyBtn"
   )
   .onclick =
-    () => trade("buy");
+    () =>
+      trade("buy");
 
 
 document
@@ -1106,34 +1837,68 @@ document
     "sellBtn"
   )
   .onclick =
-    () => trade("sell");
+    () =>
+      trade("sell");
 
 
-/* RESIZE */
+/* =========================
+   RESPONSIVE CHART
+========================= */
 
 window.addEventListener(
   "resize",
   () => {
 
-    if (selected)
-      drawChart(selected);
+    if (
+      selectedMeme
+    ) {
+
+      drawChart(
+        selectedMeme
+      );
+
+    }
 
   }
 );
 
 
-/* START */
+/* =========================
+   RENDER EVERYTHING
+========================= */
 
-renderMarket();
+function renderEverything() {
 
-renderPortfolio();
+  renderMarket(
+    document.getElementById(
+      "searchInput"
+    ).value
+  );
+
+  renderTicker();
+
+  renderOverview();
+
+  renderPortfolio();
+
+  updateModal();
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+renderEverything();
 
 
 /*
-  Market updates every 30 seconds.
+  Update the market every
+  30 seconds.
 */
 
 setInterval(
-  updateMarket,
+  updatePrices,
   30000
 );

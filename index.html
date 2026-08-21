@@ -1,564 +1,704 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart Chaos</title>
 
-  <title>MemeStock — Trade the Internet</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    body {
+        overflow: hidden;
+        background: #111;
+        font-family: Arial, Helvetica, sans-serif;
+        user-select: none;
+    }
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  >
+    #game {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background: linear-gradient(#78c9ff 0%, #dff5ff 45%, #555 45%, #333 100%);
+    }
 
-  <link rel="stylesheet" href="style.css">
+    /* Background */
+    .cloud {
+        position: absolute;
+        width: 130px;
+        height: 45px;
+        background: white;
+        border-radius: 50px;
+        opacity: 0.8;
+    }
+
+    .cloud::before,
+    .cloud::after {
+        content: "";
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .cloud::before {
+        width: 55px;
+        height: 55px;
+        left: 20px;
+        top: -25px;
+    }
+
+    .cloud::after {
+        width: 70px;
+        height: 70px;
+        right: 15px;
+        top: -35px;
+    }
+
+    .cloud1 {
+        top: 12%;
+        left: 10%;
+    }
+
+    .cloud2 {
+        top: 20%;
+        right: 12%;
+        transform: scale(.7);
+    }
+
+    /* Road */
+    #road {
+        position: absolute;
+        width: min(700px, 85vw);
+        height: 150%;
+        left: 50%;
+        top: 35%;
+        transform: translateX(-50%);
+        background:
+            repeating-linear-gradient(
+                to bottom,
+                #444 0px,
+                #444 80px,
+                #3c3c3c 80px,
+                #3c3c3c 160px
+            );
+        clip-path: polygon(
+            24% 0%,
+            76% 0%,
+            100% 100%,
+            0% 100%
+        );
+    }
+
+    /* Road edges */
+    #road::before,
+    #road::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 8px;
+        height: 100%;
+        background: white;
+    }
+
+    #road::before {
+        left: 24%;
+    }
+
+    #road::after {
+        right: 24%;
+    }
+
+    /* Road center line */
+    #centerLine {
+        position: absolute;
+        width: 8px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: repeating-linear-gradient(
+            to bottom,
+            #ffd928 0px,
+            #ffd928 45px,
+            transparent 45px,
+            transparent 90px
+        );
+    }
+
+    /* Game objects */
+    .obstacle {
+        position: absolute;
+        width: 75px;
+        height: 75px;
+        border-radius: 12px;
+        background: #ff6b00;
+        border: 5px solid #fff;
+        box-shadow: 0 8px 20px rgba(0,0,0,.35);
+        z-index: 5;
+    }
+
+    .obstacle::after {
+        content: "⚠";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 38px;
+    }
+
+    /* Cart */
+    #cart {
+        position: absolute;
+        width: 90px;
+        height: 70px;
+        left: 50%;
+        bottom: 13%;
+        transform: translateX(-50%);
+        z-index: 10;
+        transition: transform .08s linear;
+    }
+
+    .cart-body {
+        position: absolute;
+        left: 5px;
+        top: 5px;
+        width: 75px;
+        height: 45px;
+        background: #e31b23;
+        border: 5px solid #222;
+        transform: skewX(-8deg);
+        box-shadow: 0 8px 12px rgba(0,0,0,.35);
+    }
+
+    .cart-handle {
+        position: absolute;
+        right: -2px;
+        top: 0;
+        width: 8px;
+        height: 42px;
+        background: #222;
+        transform: rotate(-15deg);
+    }
+
+    .cart-wheel {
+        position: absolute;
+        bottom: 0;
+        width: 17px;
+        height: 17px;
+        background: #111;
+        border: 3px solid #777;
+        border-radius: 50%;
+    }
+
+    .wheel1 {
+        left: 15px;
+    }
+
+    .wheel2 {
+        right: 10px;
+    }
+
+    /* HUD */
+    #hud {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 50;
+        color: white;
+        text-shadow: 0 3px 8px rgba(0,0,0,.5);
+    }
+
+    #title {
+        font-size: 26px;
+        font-weight: 900;
+    }
+
+    #stats {
+        margin-top: 8px;
+        font-size: 18px;
+    }
+
+    /* Start screen */
+    #startScreen,
+    #gameOver {
+        position: absolute;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        background: rgba(0,0,0,.45);
+        backdrop-filter: blur(5px);
+    }
+
+    #startScreen h1,
+    #gameOver h1 {
+        font-size: clamp(42px, 8vw, 90px);
+        font-weight: 1000;
+        letter-spacing: -4px;
+        text-shadow: 0 8px 20px rgba(0,0,0,.5);
+    }
+
+    #startScreen p,
+    #gameOver p {
+        margin: 15px 0 25px;
+        font-size: 18px;
+    }
+
+    button {
+        border: none;
+        border-radius: 14px;
+        padding: 16px 30px;
+        font-size: 20px;
+        font-weight: 800;
+        cursor: pointer;
+        background: #ff3b30;
+        color: white;
+        box-shadow: 0 7px 0 #b51d16;
+        transition: .12s;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(5px);
+        box-shadow: 0 2px 0 #b51d16;
+    }
+
+    #gameOver {
+        display: none;
+    }
+
+    /* Mobile controls */
+    #mobileControls {
+        position: absolute;
+        bottom: 25px;
+        left: 0;
+        right: 0;
+        z-index: 60;
+        display: none;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .control {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.2);
+        border: 2px solid rgba(255,255,255,.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: white;
+    }
+
+    @media (max-width: 700px) {
+        #mobileControls {
+            display: flex;
+        }
+    }
+</style>
 </head>
 
 <body>
 
-<div class="app">
+<div id="game">
 
-  <!-- SIDEBAR -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
 
-  <aside class="sidebar">
-
-    <div class="brand">
-      <div class="brand-mark">M</div>
-
-      <div>
-        <div class="brand-name">MemeStock</div>
-        <div class="brand-subtitle">THE MEME MARKET</div>
-      </div>
+    <div id="road">
+        <div id="centerLine"></div>
     </div>
 
-
-    <nav class="sidebar-nav">
-
-      <div class="nav-label">MARKET</div>
-
-      <button class="nav-item active" data-page="market">
-        <span>◈</span>
-        Markets
-      </button>
-
-      <button class="nav-item" data-page="trending">
-        <span>↗</span>
-        Trending
-      </button>
-
-      <div class="nav-label nav-space">ACCOUNT</div>
-
-      <button class="nav-item" data-page="portfolio">
-        <span>▣</span>
-        Portfolio
-      </button>
-
-    </nav>
-
-
-    <div class="sidebar-bottom">
-
-      <div class="market-open">
-        <span class="status-dot"></span>
-        Market Open
-      </div>
-
-      <div class="virtual-badge">
-        <span>◎</span>
-        Virtual currency
-      </div>
-
+    <div id="hud">
+        <div id="title">🛒 SHOPPING CART CHAOS</div>
+        <div id="stats">
+            Distance: <span id="distance">0</span>m
+            &nbsp; | &nbsp;
+            Speed: <span id="speed">1</span>x
+        </div>
     </div>
 
-  </aside>
-
-
-  <!-- MAIN -->
-
-  <main class="main">
-
-
-    <!-- TOP BAR -->
-
-    <header class="topbar">
-
-      <div class="mobile-brand">
-        <div class="brand-mark">M</div>
-        MemeStock
-      </div>
-
-
-      <div class="market-ticker" id="marketTicker"></div>
-
-
-      <div class="topbar-right">
-
-        <div class="top-cash">
-          <span>Available cash</span>
-          <strong id="topCash">$10,000.00</strong>
-        </div>
-
-        <div class="avatar">
-          M
-        </div>
-
-      </div>
-
-    </header>
-
-
-    <!-- MARKET PAGE -->
-
-    <section id="marketPage" class="page">
-
-      <div class="page-header">
-
-        <div>
-
-          <div class="eyebrow">
-            <span class="live-dot"></span>
-            LIVE MARKET
-          </div>
-
-          <h1>
-            Trade the internet.
-          </h1>
-
-          <p>
-            Buy memes. Watch them trend. See what happens.
-          </p>
-
-        </div>
-
-
-        <div class="portfolio-summary">
-
-          <div class="summary-label">
-            PORTFOLIO VALUE
-          </div>
-
-          <div
-            class="summary-value"
-            id="portfolioValue">
-            $10,000.00
-          </div>
-
-          <div
-            id="portfolioPnl"
-            class="summary-pnl positive">
-            +$0.00
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- TRENDING STRIP -->
-
-      <div class="section-heading">
-
-        <div>
-          <h2>Trending now</h2>
-          <span>What's moving the market</span>
-        </div>
-
-        <button
-          class="text-button"
-          data-page-target="trending">
-          View all →
-        </button>
-
-      </div>
-
-
-      <div
-        class="trending-grid"
-        id="trendingGrid">
-      </div>
-
-
-      <!-- MARKET -->
-
-      <div class="section-heading market-heading">
-
-        <div>
-          <h2>Market</h2>
-          <span>All listed memes</span>
-        </div>
-
-        <div class="search-box">
-          <span>⌕</span>
-
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Search memes..."
-          >
-        </div>
-
-      </div>
-
-
-      <div class="market-container">
-
-        <div class="market-table-head">
-
-          <span>ASSET</span>
-          <span>PRICE</span>
-          <span>24H</span>
-          <span>MOMENTUM</span>
-          <span></span>
-
-        </div>
-
-        <div id="marketList"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- TRENDING PAGE -->
-
-    <section
-      id="trendingPage"
-      class="page hidden">
-
-      <div class="simple-header">
-
-        <div class="eyebrow">
-          MARKET ACTIVITY
-        </div>
-
-        <h1>
-          Trending memes
-        </h1>
-
-        <p>
-          The memes with the strongest momentum right now.
-        </p>
-
-      </div>
-
-
-      <div
-        class="large-trending-grid"
-        id="largeTrendingGrid">
-      </div>
-
-    </section>
-
-
-    <!-- PORTFOLIO PAGE -->
-
-    <section
-      id="portfolioPage"
-      class="page hidden">
-
-      <div class="simple-header">
-
-        <div class="eyebrow">
-          YOUR ACCOUNT
-        </div>
-
-        <h1>
-          Portfolio
-        </h1>
-
-        <p>
-          Your meme investments at a glance.
-        </p>
-
-      </div>
-
-
-      <div class="portfolio-cards">
-
-        <div class="stat-card">
-
-          <span>Total value</span>
-
-          <strong id="portfolioTotal">
-            $10,000.00
-          </strong>
-
-          <small
-            id="portfolioTotalPnl"
-            class="positive">
-            +$0.00
-          </small>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <span>Available cash</span>
-
-          <strong id="portfolioCash">
-            $10,000.00
-          </strong>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <span>Invested</span>
-
-          <strong id="portfolioInvested">
-            $0.00
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="portfolio-panel">
-
-        <div class="panel-header">
-
-          <div>
-            <h2>Your holdings</h2>
-            <span>Your current positions</span>
-          </div>
-
-        </div>
-
-        <div id="holdingsList"></div>
-
-      </div>
-
-    </section>
-
-  </main>
+    <div id="cart">
+        <div class="cart-body"></div>
+        <div class="cart-handle"></div>
+        <div class="cart-wheel wheel1"></div>
+        <div class="cart-wheel wheel2"></div>
+    </div>
+
+    <div id="mobileControls">
+        <div class="control" id="leftBtn">←</div>
+        <div class="control" id="rightBtn">→</div>
+    </div>
+
+    <div id="startScreen">
+        <h1>🛒 CHAOS</h1>
+        <p>How far can you send the shopping cart?</p>
+        <p><b>A / D</b> or <b>← / →</b> to steer</p>
+        <button id="startButton">START RUN</button>
+    </div>
+
+    <div id="gameOver">
+        <h1>💥 CRASHED!</h1>
+        <p>Your cart survived <b><span id="finalDistance">0</span>m</b></p>
+        <button id="restartButton">TRY AGAIN</button>
+    </div>
 
 </div>
 
+<script>
+const game = document.getElementById("game");
+const cart = document.getElementById("cart");
 
-<!-- ASSET DETAIL MODAL -->
+const distanceText = document.getElementById("distance");
+const speedText = document.getElementById("speed");
 
-<div
-  class="modal hidden"
-  id="assetModal">
+const startScreen = document.getElementById("startScreen");
+const gameOverScreen = document.getElementById("gameOver");
 
-  <div
-    class="modal-backdrop"
-    data-close>
-  </div>
+const finalDistance = document.getElementById("finalDistance");
 
+const startButton = document.getElementById("startButton");
+const restartButton = document.getElementById("restartButton");
 
-  <div class="asset-modal">
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
 
-    <button
-      class="modal-close"
-      data-close>
-      ×
-    </button>
+let running = false;
 
+let cartX = window.innerWidth / 2;
 
-    <div class="asset-top">
+let velocity = 0;
+let acceleration = 0.7;
 
-      <div class="asset-identity">
+let distance = 0;
+let gameSpeed = 5;
 
-        <div
-          class="asset-image large"
-          id="modalImage">
-        </div>
+let obstacles = [];
 
-        <div>
+let keys = {
+    left: false,
+    right: false
+};
 
-          <div
-            class="asset-ticker"
-            id="modalTicker">
-            GIGA
-          </div>
+let lastTime = 0;
+let obstacleTimer = 0;
 
-          <h2 id="modalName">
-            GigaChad
-          </h2>
 
-        </div>
+/* -----------------------------
+   CONTROLS
+----------------------------- */
 
-      </div>
+document.addEventListener("keydown", e => {
 
+    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
+        keys.left = true;
+    }
 
-      <div class="modal-price">
+    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
+        keys.right = true;
+    }
 
-        <strong id="modalPrice">
-          $142.37
-        </strong>
+});
 
-        <span
-          id="modalChange"
-          class="positive">
-          +12.4%
-        </span>
+document.addEventListener("keyup", e => {
 
-      </div>
+    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
+        keys.left = false;
+    }
 
-    </div>
+    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
+        keys.right = false;
+    }
 
+});
 
-    <div class="chart-container">
 
-      <div class="chart-top">
+/* Mobile */
 
-        <div class="chart-tabs">
+function pressLeft(e) {
+    e.preventDefault();
+    keys.left = true;
+}
 
-          <button class="active">1D</button>
-          <button>1W</button>
-          <button>1M</button>
-          <button>ALL</button>
+function releaseLeft(e) {
+    e.preventDefault();
+    keys.left = false;
+}
 
-        </div>
+function pressRight(e) {
+    e.preventDefault();
+    keys.right = true;
+}
 
-      </div>
+function releaseRight(e) {
+    e.preventDefault();
+    keys.right = false;
+}
 
-      <canvas id="priceChart"></canvas>
+leftBtn.addEventListener("touchstart", pressLeft);
+leftBtn.addEventListener("touchend", releaseLeft);
 
-    </div>
+rightBtn.addEventListener("touchstart", pressRight);
+rightBtn.addEventListener("touchend", releaseRight);
 
 
-    <div class="asset-stats">
+/* -----------------------------
+   START / RESTART
+----------------------------- */
 
-      <div class="asset-stat">
+startButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", startGame);
 
-        <span>Momentum</span>
+function startGame() {
 
-        <strong id="modalMomentum">
-          92
-        </strong>
+    startScreen.style.display = "none";
+    gameOverScreen.style.display = "none";
 
-        <div class="momentum-track">
-          <div
-            id="modalMomentumBar"
-            class="momentum-fill">
-          </div>
-        </div>
+    obstacles.forEach(o => o.remove());
+    obstacles = [];
 
-      </div>
+    cartX = window.innerWidth / 2;
 
+    velocity = 0;
 
-      <div class="asset-stat">
+    distance = 0;
 
-        <span>Views</span>
+    gameSpeed = 5;
 
-        <strong id="modalViews">
-          84.2K
-        </strong>
+    obstacleTimer = 0;
 
-      </div>
+    running = true;
 
+    lastTime = performance.now();
 
-      <div class="asset-stat">
+    requestAnimationFrame(gameLoop);
+}
 
-        <span>Likes</span>
 
-        <strong id="modalLikes">
-          12.4K
-        </strong>
+/* -----------------------------
+   CREATE OBSTACLE
+----------------------------- */
 
-      </div>
+function createObstacle() {
 
+    const obstacle = document.createElement("div");
 
-      <div class="asset-stat">
+    obstacle.className = "obstacle";
 
-        <span>Shares</span>
+    const roadWidth = Math.min(700, window.innerWidth * .85);
 
-        <strong id="modalShares">
-          5.9K
-        </strong>
+    const roadLeft = window.innerWidth / 2 - roadWidth / 2;
+    const roadRight = window.innerWidth / 2 + roadWidth / 2;
 
-      </div>
+    const padding = 100;
 
-    </div>
+    const x =
+        roadLeft +
+        padding +
+        Math.random() *
+        (roadRight - roadLeft - padding * 2);
 
+    obstacle.style.left = `${x}px`;
 
-    <div class="trade-area">
+    obstacle.style.top = "-100px";
 
-      <div class="trade-input">
+    game.appendChild(obstacle);
 
-        <label>SHARES</label>
+    obstacles.push(obstacle);
+}
 
-        <div class="quantity-control">
 
-          <button id="minusBtn">−</button>
+/* -----------------------------
+   COLLISION
+----------------------------- */
 
-          <input
-            id="quantityInput"
-            type="number"
-            value="1"
-            min="1"
-          >
+function collision(a, b) {
 
-          <button id="plusBtn">+</button>
+    const r1 = a.getBoundingClientRect();
+    const r2 = b.getBoundingClientRect();
 
-        </div>
+    return !(
+        r1.right < r2.left ||
+        r1.left > r2.right ||
+        r1.bottom < r2.top ||
+        r1.top > r2.bottom
+    );
+}
 
-      </div>
 
+/* -----------------------------
+   GAME LOOP
+----------------------------- */
 
-      <div class="trade-total">
+function gameLoop(time) {
 
-        <span>ESTIMATED TOTAL</span>
+    if (!running) return;
 
-        <strong id="estimatedTotal">
-          $142.37
-        </strong>
+    const delta = Math.min((time - lastTime) / 16.67, 2);
 
-      </div>
+    lastTime = time;
 
+    update(delta);
 
-      <div class="trade-buttons">
+    requestAnimationFrame(gameLoop);
+}
 
-        <button
-          id="buyButton"
-          class="buy-button">
-          Buy
-        </button>
 
-        <button
-          id="sellButton"
-          class="sell-button">
-          Sell
-        </button>
+function update(delta) {
 
-      </div>
+    /* Steering */
 
-    </div>
+    if (keys.left) {
+        velocity -= acceleration * delta;
+    }
 
+    if (keys.right) {
+        velocity += acceleration * delta;
+    }
 
-    <div class="owned-line">
+    /* Friction */
 
-      You own
-      <strong id="ownedShares">0</strong>
-      shares
+    velocity *= 0.88;
 
-    </div>
+    cartX += velocity * delta;
 
+    /* Keep cart on screen */
 
-    <div class="virtual-warning">
-      MemeStock uses virtual currency. No real money is involved.
-    </div>
+    const margin = 80;
 
-  </div>
+    if (cartX < margin) {
+        cartX = margin;
+        velocity *= -0.4;
+    }
 
-</div>
+    if (cartX > window.innerWidth - margin) {
+        cartX = window.innerWidth - margin;
+        velocity *= -0.4;
+    }
 
+    cart.style.left = `${cartX}px`;
 
-<div
-  id="toast"
-  class="toast hidden">
-</div>
+    /* Slight cart tilt */
 
+    const tilt = velocity * 2;
 
-<script src="script.js"></script>
+    cart.style.transform =
+        `translateX(-50%) rotate(${tilt}deg)`;
+
+
+    /* Speed increases */
+
+    gameSpeed += 0.0015 * delta;
+
+    distance += gameSpeed * 0.03 * delta;
+
+    distanceText.textContent =
+        Math.floor(distance);
+
+    speedText.textContent =
+        gameSpeed.toFixed(1);
+
+
+    /* Spawn obstacles */
+
+    obstacleTimer += delta;
+
+    const spawnRate =
+        Math.max(25, 75 - gameSpeed * 4);
+
+    if (obstacleTimer > spawnRate) {
+
+        obstacleTimer = 0;
+
+        createObstacle();
+    }
+
+
+    /* Move obstacles */
+
+    obstacles.forEach((obstacle, index) => {
+
+        let top =
+            parseFloat(obstacle.style.top);
+
+        top += gameSpeed * delta;
+
+        obstacle.style.top = `${top}px`;
+
+
+        /* Collision */
+
+        if (collision(cart, obstacle)) {
+
+            crash();
+
+        }
+
+
+        /* Remove old obstacles */
+
+        if (top > window.innerHeight + 150) {
+
+            obstacle.remove();
+
+            obstacles.splice(index, 1);
+
+        }
+
+    });
+
+}
+
+
+/* -----------------------------
+   CRASH
+----------------------------- */
+
+function crash() {
+
+    if (!running) return;
+
+    running = false;
+
+    finalDistance.textContent =
+        Math.floor(distance);
+
+    gameOverScreen.style.display = "flex";
+}
+
+
+/* -----------------------------
+   RESIZE
+----------------------------- */
+
+window.addEventListener("resize", () => {
+
+    if (!running) {
+
+        cartX =
+            window.innerWidth / 2;
+
+        cart.style.left =
+            `${cartX}px`;
+
+    }
+
+});
+</script>
 
 </body>
 </html>

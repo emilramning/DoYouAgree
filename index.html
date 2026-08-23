@@ -1,704 +1,285 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shopping Cart Chaos</title>
-
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        overflow: hidden;
-        background: #111;
-        font-family: Arial, Helvetica, sans-serif;
-        user-select: none;
-    }
-
-    #game {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        background: linear-gradient(#78c9ff 0%, #dff5ff 45%, #555 45%, #333 100%);
-    }
-
-    /* Background */
-    .cloud {
-        position: absolute;
-        width: 130px;
-        height: 45px;
-        background: white;
-        border-radius: 50px;
-        opacity: 0.8;
-    }
-
-    .cloud::before,
-    .cloud::after {
-        content: "";
-        position: absolute;
-        background: white;
-        border-radius: 50%;
-    }
-
-    .cloud::before {
-        width: 55px;
-        height: 55px;
-        left: 20px;
-        top: -25px;
-    }
-
-    .cloud::after {
-        width: 70px;
-        height: 70px;
-        right: 15px;
-        top: -35px;
-    }
-
-    .cloud1 {
-        top: 12%;
-        left: 10%;
-    }
-
-    .cloud2 {
-        top: 20%;
-        right: 12%;
-        transform: scale(.7);
-    }
-
-    /* Road */
-    #road {
-        position: absolute;
-        width: min(700px, 85vw);
-        height: 150%;
-        left: 50%;
-        top: 35%;
-        transform: translateX(-50%);
-        background:
-            repeating-linear-gradient(
-                to bottom,
-                #444 0px,
-                #444 80px,
-                #3c3c3c 80px,
-                #3c3c3c 160px
-            );
-        clip-path: polygon(
-            24% 0%,
-            76% 0%,
-            100% 100%,
-            0% 100%
-        );
-    }
-
-    /* Road edges */
-    #road::before,
-    #road::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 8px;
-        height: 100%;
-        background: white;
-    }
-
-    #road::before {
-        left: 24%;
-    }
-
-    #road::after {
-        right: 24%;
-    }
-
-    /* Road center line */
-    #centerLine {
-        position: absolute;
-        width: 8px;
-        height: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: repeating-linear-gradient(
-            to bottom,
-            #ffd928 0px,
-            #ffd928 45px,
-            transparent 45px,
-            transparent 90px
-        );
-    }
-
-    /* Game objects */
-    .obstacle {
-        position: absolute;
-        width: 75px;
-        height: 75px;
-        border-radius: 12px;
-        background: #ff6b00;
-        border: 5px solid #fff;
-        box-shadow: 0 8px 20px rgba(0,0,0,.35);
-        z-index: 5;
-    }
-
-    .obstacle::after {
-        content: "⚠";
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        font-size: 38px;
-    }
-
-    /* Cart */
-    #cart {
-        position: absolute;
-        width: 90px;
-        height: 70px;
-        left: 50%;
-        bottom: 13%;
-        transform: translateX(-50%);
-        z-index: 10;
-        transition: transform .08s linear;
-    }
-
-    .cart-body {
-        position: absolute;
-        left: 5px;
-        top: 5px;
-        width: 75px;
-        height: 45px;
-        background: #e31b23;
-        border: 5px solid #222;
-        transform: skewX(-8deg);
-        box-shadow: 0 8px 12px rgba(0,0,0,.35);
-    }
-
-    .cart-handle {
-        position: absolute;
-        right: -2px;
-        top: 0;
-        width: 8px;
-        height: 42px;
-        background: #222;
-        transform: rotate(-15deg);
-    }
-
-    .cart-wheel {
-        position: absolute;
-        bottom: 0;
-        width: 17px;
-        height: 17px;
-        background: #111;
-        border: 3px solid #777;
-        border-radius: 50%;
-    }
-
-    .wheel1 {
-        left: 15px;
-    }
-
-    .wheel2 {
-        right: 10px;
-    }
-
-    /* HUD */
-    #hud {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        z-index: 50;
-        color: white;
-        text-shadow: 0 3px 8px rgba(0,0,0,.5);
-    }
-
-    #title {
-        font-size: 26px;
-        font-weight: 900;
-    }
-
-    #stats {
-        margin-top: 8px;
-        font-size: 18px;
-    }
-
-    /* Start screen */
-    #startScreen,
-    #gameOver {
-        position: absolute;
-        inset: 0;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        text-align: center;
-        background: rgba(0,0,0,.45);
-        backdrop-filter: blur(5px);
-    }
-
-    #startScreen h1,
-    #gameOver h1 {
-        font-size: clamp(42px, 8vw, 90px);
-        font-weight: 1000;
-        letter-spacing: -4px;
-        text-shadow: 0 8px 20px rgba(0,0,0,.5);
-    }
-
-    #startScreen p,
-    #gameOver p {
-        margin: 15px 0 25px;
-        font-size: 18px;
-    }
-
-    button {
-        border: none;
-        border-radius: 14px;
-        padding: 16px 30px;
-        font-size: 20px;
-        font-weight: 800;
-        cursor: pointer;
-        background: #ff3b30;
-        color: white;
-        box-shadow: 0 7px 0 #b51d16;
-        transition: .12s;
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-    }
-
-    button:active {
-        transform: translateY(5px);
-        box-shadow: 0 2px 0 #b51d16;
-    }
-
-    #gameOver {
-        display: none;
-    }
-
-    /* Mobile controls */
-    #mobileControls {
-        position: absolute;
-        bottom: 25px;
-        left: 0;
-        right: 0;
-        z-index: 60;
-        display: none;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .control {
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        background: rgba(255,255,255,.2);
-        border: 2px solid rgba(255,255,255,.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        color: white;
-    }
-
-    @media (max-width: 700px) {
-        #mobileControls {
-            display: flex;
-        }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 98 Simulator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="game">
+    <!-- BOOT SCREEN -->
+    <div id="bootScreen">
+        <div class="bootLogo">Microsoft <span>Windows</span></div>
+        <div class="boot98">Windows 98</div>
 
-    <div class="cloud cloud1"></div>
-    <div class="cloud cloud2"></div>
-
-    <div id="road">
-        <div id="centerLine"></div>
-    </div>
-
-    <div id="hud">
-        <div id="title">🛒 SHOPPING CART CHAOS</div>
-        <div id="stats">
-            Distance: <span id="distance">0</span>m
-            &nbsp; | &nbsp;
-            Speed: <span id="speed">1</span>x
+        <div class="loadingBox">
+            <div id="loadingBar"></div>
         </div>
+
+        <div class="bootText">Starting Windows 98...</div>
     </div>
 
-    <div id="cart">
-        <div class="cart-body"></div>
-        <div class="cart-handle"></div>
-        <div class="cart-wheel wheel1"></div>
-        <div class="cart-wheel wheel2"></div>
+    <!-- DESKTOP -->
+    <div id="desktop">
+
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+
+            <div class="desktop-icon" ondblclick="openWindow('computerWindow')">
+                <div class="icon">💻</div>
+                <span>My Computer</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('documentsWindow')">
+                <div class="icon">📁</div>
+                <span>My Documents</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('notepadWindow')">
+                <div class="icon">📝</div>
+                <span>Notepad</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('paintWindow')">
+                <div class="icon">🎨</div>
+                <span>Paint</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('calculatorWindow')">
+                <div class="icon">🧮</div>
+                <span>Calculator</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('internetWindow')">
+                <div class="icon">🌐</div>
+                <span>Internet Explorer</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openMinesweeper()">
+                <div class="icon">💣</div>
+                <span>Minesweeper</span>
+            </div>
+
+            <div class="desktop-icon">
+                <div class="icon">🗑️</div>
+                <span>Recycle Bin</span>
+            </div>
+
+        </div>
+
+        <!-- WINDOWS -->
+
+        <!-- MY COMPUTER -->
+        <div class="window" id="computerWindow">
+            <div class="titlebar">
+                <span>💻 My Computer</span>
+                <div>
+                    <button onclick="minimizeWindow('computerWindow')">_</button>
+                    <button onclick="maximizeWindow('computerWindow')">□</button>
+                    <button onclick="closeWindow('computerWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="window-content explorer">
+                <div class="drive">💾 <b>3½ Floppy (A:)</b></div>
+                <div class="drive">💿 <b>CD Drive (D:)</b></div>
+                <div class="drive">💻 <b>Local Disk (C:)</b></div>
+            </div>
+        </div>
+
+        <!-- DOCUMENTS -->
+        <div class="window" id="documentsWindow">
+            <div class="titlebar">
+                <span>📁 My Documents</span>
+                <div>
+                    <button onclick="minimizeWindow('documentsWindow')">_</button>
+                    <button onclick="maximizeWindow('documentsWindow')">□</button>
+                    <button onclick="closeWindow('documentsWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="window-content">
+                <div class="file">📄 Welcome.txt</div>
+                <div class="file">📄 homework.txt</div>
+                <div class="file">🖼️ vacation.bmp</div>
+            </div>
+        </div>
+
+        <!-- NOTEPAD -->
+        <div class="window" id="notepadWindow">
+            <div class="titlebar">
+                <span>📝 Notepad</span>
+                <div>
+                    <button onclick="minimizeWindow('notepadWindow')">_</button>
+                    <button onclick="maximizeWindow('notepadWindow')">□</button>
+                    <button onclick="closeWindow('notepadWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="window-content notepad">
+                <textarea placeholder="Type something..."></textarea>
+            </div>
+        </div>
+
+        <!-- PAINT -->
+        <div class="window" id="paintWindow">
+            <div class="titlebar">
+                <span>🎨 Paint</span>
+                <div>
+                    <button onclick="minimizeWindow('paintWindow')">_</button>
+                    <button onclick="maximizeWindow('paintWindow')">□</button>
+                    <button onclick="closeWindow('paintWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="paint-toolbar">
+                <button onclick="setTool('pen')">✏️</button>
+                <button onclick="clearCanvas()">🗑️</button>
+            </div>
+
+            <canvas id="paintCanvas" width="500" height="330"></canvas>
+        </div>
+
+        <!-- CALCULATOR -->
+        <div class="window calculator" id="calculatorWindow">
+            <div class="titlebar">
+                <span>🧮 Calculator</span>
+                <div>
+                    <button onclick="minimizeWindow('calculatorWindow')">_</button>
+                    <button onclick="closeWindow('calculatorWindow')">×</button>
+                </div>
+            </div>
+
+            <input id="calcDisplay" readonly>
+
+            <div class="calcButtons">
+                <button onclick="calc('7')">7</button>
+                <button onclick="calc('8')">8</button>
+                <button onclick="calc('9')">9</button>
+                <button onclick="calc('/')">÷</button>
+
+                <button onclick="calc('4')">4</button>
+                <button onclick="calc('5')">5</button>
+                <button onclick="calc('6')">6</button>
+                <button onclick="calc('*')">×</button>
+
+                <button onclick="calc('1')">1</button>
+                <button onclick="calc('2')">2</button>
+                <button onclick="calc('3')">3</button>
+                <button onclick="calc('-')">−</button>
+
+                <button onclick="calc('0')">0</button>
+                <button onclick="calc('.')">.</button>
+                <button onclick="calculate()">=</button>
+                <button onclick="calc('+')">+</button>
+
+                <button onclick="clearCalc()">C</button>
+            </div>
+        </div>
+
+        <!-- INTERNET EXPLORER -->
+        <div class="window internet" id="internetWindow">
+            <div class="titlebar">
+                <span>🌐 Internet Explorer</span>
+                <div>
+                    <button onclick="minimizeWindow('internetWindow')">_</button>
+                    <button onclick="maximizeWindow('internetWindow')">□</button>
+                    <button onclick="closeWindow('internetWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="browser-bar">
+                <input value="http://www.example.com">
+                <button onclick="fakeInternet()">Go</button>
+            </div>
+
+            <div class="browser-page" id="browserPage">
+                <h1>Welcome to the Internet!</h1>
+                <p>You've successfully connected to the World Wide Web.</p>
+                <hr>
+                <p>🌐 Best viewed in Internet Explorer 4.0</p>
+                <p>⚡ 56K Dial-Up Connection</p>
+            </div>
+        </div>
+
+        <!-- MINESWEEPER -->
+        <div class="window minesweeper" id="minesweeperWindow">
+            <div class="titlebar">
+                <span>💣 Minesweeper</span>
+                <div>
+                    <button onclick="closeWindow('minesweeperWindow')">×</button>
+                </div>
+            </div>
+
+            <div class="mine-header">
+                <span id="mineCount">010</span>
+                <button onclick="newGame()">🙂</button>
+                <span id="mineTimer">000</span>
+            </div>
+
+            <div id="mineGrid"></div>
+        </div>
+
+        <!-- START MENU -->
+        <div id="startMenu">
+
+            <div class="startSide">
+                <span>Windows</span>
+                <b>98</b>
+            </div>
+
+            <div class="startItems">
+
+                <div onclick="openWindow('computerWindow')">
+                    💻 <span>My Computer</span>
+                </div>
+
+                <div onclick="openWindow('documentsWindow')">
+                    📁 <span>My Documents</span>
+                </div>
+
+                <div onclick="openWindow('notepadWindow')">
+                    📝 <span>Notepad</span>
+                </div>
+
+                <div onclick="openWindow('paintWindow')">
+                    🎨 <span>Paint</span>
+                </div>
+
+                <div onclick="openWindow('calculatorWindow')">
+                    🧮 <span>Calculator</span>
+                </div>
+
+                <div onclick="openMinesweeper()">
+                    💣 <span>Minesweeper</span>
+                </div>
+
+                <hr>
+
+                <div onclick="shutdown()">
+                    🔌 <span>Shut Down...</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TASKBAR -->
+        <div id="taskbar">
+
+            <button id="startButton" onclick="toggleStartMenu()">
+                🪟 <b>Start</b>
+            </button>
+
+            <div id="taskbarApps"></div>
+
+            <div id="clock"></div>
+
+        </div>
+
     </div>
 
-    <div id="mobileControls">
-        <div class="control" id="leftBtn">←</div>
-        <div class="control" id="rightBtn">→</div>
-    </div>
-
-    <div id="startScreen">
-        <h1>🛒 CHAOS</h1>
-        <p>How far can you send the shopping cart?</p>
-        <p><b>A / D</b> or <b>← / →</b> to steer</p>
-        <button id="startButton">START RUN</button>
-    </div>
-
-    <div id="gameOver">
-        <h1>💥 CRASHED!</h1>
-        <p>Your cart survived <b><span id="finalDistance">0</span>m</b></p>
-        <button id="restartButton">TRY AGAIN</button>
-    </div>
-
-</div>
-
-<script>
-const game = document.getElementById("game");
-const cart = document.getElementById("cart");
-
-const distanceText = document.getElementById("distance");
-const speedText = document.getElementById("speed");
-
-const startScreen = document.getElementById("startScreen");
-const gameOverScreen = document.getElementById("gameOver");
-
-const finalDistance = document.getElementById("finalDistance");
-
-const startButton = document.getElementById("startButton");
-const restartButton = document.getElementById("restartButton");
-
-const leftBtn = document.getElementById("leftBtn");
-const rightBtn = document.getElementById("rightBtn");
-
-let running = false;
-
-let cartX = window.innerWidth / 2;
-
-let velocity = 0;
-let acceleration = 0.7;
-
-let distance = 0;
-let gameSpeed = 5;
-
-let obstacles = [];
-
-let keys = {
-    left: false,
-    right: false
-};
-
-let lastTime = 0;
-let obstacleTimer = 0;
-
-
-/* -----------------------------
-   CONTROLS
------------------------------ */
-
-document.addEventListener("keydown", e => {
-
-    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
-        keys.left = true;
-    }
-
-    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
-        keys.right = true;
-    }
-
-});
-
-document.addEventListener("keyup", e => {
-
-    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
-        keys.left = false;
-    }
-
-    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
-        keys.right = false;
-    }
-
-});
-
-
-/* Mobile */
-
-function pressLeft(e) {
-    e.preventDefault();
-    keys.left = true;
-}
-
-function releaseLeft(e) {
-    e.preventDefault();
-    keys.left = false;
-}
-
-function pressRight(e) {
-    e.preventDefault();
-    keys.right = true;
-}
-
-function releaseRight(e) {
-    e.preventDefault();
-    keys.right = false;
-}
-
-leftBtn.addEventListener("touchstart", pressLeft);
-leftBtn.addEventListener("touchend", releaseLeft);
-
-rightBtn.addEventListener("touchstart", pressRight);
-rightBtn.addEventListener("touchend", releaseRight);
-
-
-/* -----------------------------
-   START / RESTART
------------------------------ */
-
-startButton.addEventListener("click", startGame);
-restartButton.addEventListener("click", startGame);
-
-function startGame() {
-
-    startScreen.style.display = "none";
-    gameOverScreen.style.display = "none";
-
-    obstacles.forEach(o => o.remove());
-    obstacles = [];
-
-    cartX = window.innerWidth / 2;
-
-    velocity = 0;
-
-    distance = 0;
-
-    gameSpeed = 5;
-
-    obstacleTimer = 0;
-
-    running = true;
-
-    lastTime = performance.now();
-
-    requestAnimationFrame(gameLoop);
-}
-
-
-/* -----------------------------
-   CREATE OBSTACLE
------------------------------ */
-
-function createObstacle() {
-
-    const obstacle = document.createElement("div");
-
-    obstacle.className = "obstacle";
-
-    const roadWidth = Math.min(700, window.innerWidth * .85);
-
-    const roadLeft = window.innerWidth / 2 - roadWidth / 2;
-    const roadRight = window.innerWidth / 2 + roadWidth / 2;
-
-    const padding = 100;
-
-    const x =
-        roadLeft +
-        padding +
-        Math.random() *
-        (roadRight - roadLeft - padding * 2);
-
-    obstacle.style.left = `${x}px`;
-
-    obstacle.style.top = "-100px";
-
-    game.appendChild(obstacle);
-
-    obstacles.push(obstacle);
-}
-
-
-/* -----------------------------
-   COLLISION
------------------------------ */
-
-function collision(a, b) {
-
-    const r1 = a.getBoundingClientRect();
-    const r2 = b.getBoundingClientRect();
-
-    return !(
-        r1.right < r2.left ||
-        r1.left > r2.right ||
-        r1.bottom < r2.top ||
-        r1.top > r2.bottom
-    );
-}
-
-
-/* -----------------------------
-   GAME LOOP
------------------------------ */
-
-function gameLoop(time) {
-
-    if (!running) return;
-
-    const delta = Math.min((time - lastTime) / 16.67, 2);
-
-    lastTime = time;
-
-    update(delta);
-
-    requestAnimationFrame(gameLoop);
-}
-
-
-function update(delta) {
-
-    /* Steering */
-
-    if (keys.left) {
-        velocity -= acceleration * delta;
-    }
-
-    if (keys.right) {
-        velocity += acceleration * delta;
-    }
-
-    /* Friction */
-
-    velocity *= 0.88;
-
-    cartX += velocity * delta;
-
-    /* Keep cart on screen */
-
-    const margin = 80;
-
-    if (cartX < margin) {
-        cartX = margin;
-        velocity *= -0.4;
-    }
-
-    if (cartX > window.innerWidth - margin) {
-        cartX = window.innerWidth - margin;
-        velocity *= -0.4;
-    }
-
-    cart.style.left = `${cartX}px`;
-
-    /* Slight cart tilt */
-
-    const tilt = velocity * 2;
-
-    cart.style.transform =
-        `translateX(-50%) rotate(${tilt}deg)`;
-
-
-    /* Speed increases */
-
-    gameSpeed += 0.0015 * delta;
-
-    distance += gameSpeed * 0.03 * delta;
-
-    distanceText.textContent =
-        Math.floor(distance);
-
-    speedText.textContent =
-        gameSpeed.toFixed(1);
-
-
-    /* Spawn obstacles */
-
-    obstacleTimer += delta;
-
-    const spawnRate =
-        Math.max(25, 75 - gameSpeed * 4);
-
-    if (obstacleTimer > spawnRate) {
-
-        obstacleTimer = 0;
-
-        createObstacle();
-    }
-
-
-    /* Move obstacles */
-
-    obstacles.forEach((obstacle, index) => {
-
-        let top =
-            parseFloat(obstacle.style.top);
-
-        top += gameSpeed * delta;
-
-        obstacle.style.top = `${top}px`;
-
-
-        /* Collision */
-
-        if (collision(cart, obstacle)) {
-
-            crash();
-
-        }
-
-
-        /* Remove old obstacles */
-
-        if (top > window.innerHeight + 150) {
-
-            obstacle.remove();
-
-            obstacles.splice(index, 1);
-
-        }
-
-    });
-
-}
-
-
-/* -----------------------------
-   CRASH
------------------------------ */
-
-function crash() {
-
-    if (!running) return;
-
-    running = false;
-
-    finalDistance.textContent =
-        Math.floor(distance);
-
-    gameOverScreen.style.display = "flex";
-}
-
-
-/* -----------------------------
-   RESIZE
------------------------------ */
-
-window.addEventListener("resize", () => {
-
-    if (!running) {
-
-        cartX =
-            window.innerWidth / 2;
-
-        cart.style.left =
-            `${cartX}px`;
-
-    }
-
-});
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>

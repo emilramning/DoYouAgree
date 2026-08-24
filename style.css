@@ -2,20 +2,16 @@
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
-    min-height: 100vh;
-
+    width: 100%;
+    min-height: 100%;
     font-family: Arial, Helvetica, sans-serif;
+}
 
-    background:
-        radial-gradient(
-            circle at top,
-            #27273d 0%,
-            #11111b 55%,
-            #09090e 100%
-        );
-
+body {
+    background: #0b0b12;
     color: white;
 }
 
@@ -28,7 +24,8 @@ body {
     position: fixed;
     inset: 0;
 
-    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
 
     display: flex;
     align-items: center;
@@ -36,41 +33,49 @@ body {
 
     background:
         radial-gradient(
-            circle at top,
-            #292941,
-            #0d0d15 65%
+            circle at center,
+            #292943 0%,
+            #11111b 50%,
+            #08080d 100%
         );
+
+    z-index: 999999;
+
+    opacity: 1;
+    visibility: visible;
 
     transition:
         opacity 0.6s ease,
+        visibility 0.6s ease,
         transform 0.6s ease;
+}
+
+#startScreen.hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.05);
 }
 
 .startContent {
     text-align: center;
-
-    animation:
-        startAppear 0.8s ease;
 }
 
 .startContent h1 {
     margin: 0 0 40px;
 
-    font-size: clamp(
-        45px,
-        8vw,
-        85px
-    );
+    font-size: clamp(48px, 8vw, 90px);
 
     font-weight: 800;
 
     letter-spacing: -4px;
+
+    animation: titleAppear 0.8s ease;
 }
 
-.startContent button {
-    padding: 18px 60px;
-
+#startButton {
     border: none;
+
+    padding: 18px 65px;
 
     border-radius: 14px;
 
@@ -85,41 +90,34 @@ body {
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease;
+
+    animation: buttonAppear 1s ease;
 }
 
-.startContent button:hover {
-    transform:
-        translateY(-4px)
-        scale(1.03);
+#startButton:hover {
+    transform: translateY(-4px) scale(1.03);
 
     box-shadow:
         0 15px 45px
-        rgba(255,255,255,0.15);
+        rgba(255,255,255,0.2);
 }
 
-.startContent button:active {
-    transform: scale(0.97);
+#startButton:active {
+    transform: scale(0.96);
 }
 
-#startScreen.hide {
-    opacity: 0;
-    transform: scale(1.05);
 
-    pointer-events: none;
+/* =========================
+   APP
+========================= */
+
+#app {
+    display: none;
+    min-height: 100vh;
 }
 
-@keyframes startAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+#app.active {
+    display: block;
 }
 
 
@@ -161,16 +159,6 @@ header {
     color: white;
 
     cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.statsBtn:hover {
-    background:
-        rgba(255,255,255,0.14);
-
-    transform:
-        translateY(-2px);
 }
 
 
@@ -181,8 +169,7 @@ header {
 main {
     max-width: 800px;
 
-    margin:
-        70px auto;
+    margin: 70px auto;
 
     padding: 20px;
 
@@ -190,7 +177,7 @@ main {
 }
 
 .counter {
-    color: #8f8f9c;
+    color: #888;
 
     font-size: 14px;
 
@@ -199,12 +186,11 @@ main {
 
 
 /* =========================
-   QUESTION CARD
+   CARD
 ========================= */
 
 .card {
-    padding:
-        55px 45px;
+    padding: 55px 45px;
 
     border-radius: 25px;
 
@@ -218,16 +204,12 @@ main {
     box-shadow:
         0 25px 80px
         rgba(0,0,0,0.4);
-
-    backdrop-filter:
-        blur(15px);
 }
 
 .category {
     display: inline-block;
 
-    padding:
-        7px 13px;
+    padding: 7px 13px;
 
     border-radius: 50px;
 
@@ -245,34 +227,25 @@ main {
 }
 
 #question {
-    max-width: 650px;
+    font-size: clamp(28px, 5vw, 46px);
+
+    line-height: 1.15;
 
     margin:
         0 auto 45px;
 
-    font-size:
-        clamp(
-            28px,
-            5vw,
-            46px
-        );
-
-    line-height: 1.15;
-
-    font-weight: 800;
+    max-width: 650px;
 }
 
 
 /* =========================
-   VOTE BUTTONS
+   BUTTONS
 ========================= */
 
 .buttons {
     display: flex;
-
-    justify-content: center;
-
     gap: 15px;
+    justify-content: center;
 }
 
 .buttons button {
@@ -293,45 +266,23 @@ main {
 
     cursor: pointer;
 
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s,
-        opacity 0.2s;
-}
-
-.buttons button:disabled {
-    opacity: 0.45;
-    cursor: default;
+    transition: 0.2s;
 }
 
 .agree {
     background: #20a464;
 }
 
-.agree:hover:not(:disabled) {
-    background: #28bd76;
-
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 10px 30px
-        rgba(32,164,100,0.3);
-}
-
 .disagree {
     background: #d84848;
 }
 
-.disagree:hover:not(:disabled) {
-    background: #ed5959;
+.buttons button:hover:not(:disabled) {
+    transform: translateY(-3px);
+}
 
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 10px 30px
-        rgba(216,72,72,0.3);
+.buttons button:disabled {
+    opacity: 0.4;
 }
 
 
@@ -341,48 +292,42 @@ main {
 
 .results {
     margin-top: 35px;
+}
 
-    animation:
-        resultAppear 0.4s ease;
+.hidden {
+    display: none !important;
 }
 
 .resultTitle {
     color: #aaa;
-
     margin-bottom: 25px;
 }
 
 .percentages {
     display: flex;
-
-    justify-content:
-        space-around;
-
+    justify-content: space-around;
     margin-bottom: 20px;
 }
 
-.percentageBox {
+.percentages div {
     display: flex;
-
     flex-direction: column;
-
     gap: 5px;
 }
 
-.percentageBox strong {
+.percentages strong {
     font-size: 32px;
 }
 
-.percentageBox span {
+.percentages span {
     color: #999;
-
     font-size: 13px;
 }
 
 .bar {
-    width: 100%;
-
     height: 12px;
+
+    width: 100%;
 
     background: #d84848;
 
@@ -392,54 +337,39 @@ main {
 }
 
 #agreeBar {
-    width: 50%;
-
     height: 100%;
+    width: 50%;
 
     background: #20a464;
 
-    transition:
-        width 1s ease;
+    transition: width 1s ease;
 }
 
 #resultMessage {
     color: #aaa;
-
-    margin-top: 20px;
 }
 
 
 /* =========================
-   NEXT BUTTON
+   NEXT
 ========================= */
 
 .next {
     margin-top: 25px;
 
-    padding:
-        15px 25px;
+    padding: 15px 25px;
 
     border: none;
 
     border-radius: 12px;
 
     background: white;
+
     color: #111;
 
     font-weight: bold;
 
     cursor: pointer;
-
-    transition:
-        transform 0.2s,
-        background 0.2s;
-}
-
-.next:hover {
-    transform:
-        translateY(-3px);
-
-    background: #eeeeee;
 }
 
 
@@ -449,43 +379,29 @@ main {
 
 .modal {
     position: fixed;
-
     inset: 0;
-
-    z-index: 100;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
 
     background:
         rgba(0,0,0,0.7);
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
 }
 
 .modalContent {
     position: relative;
 
-    width:
-        min(400px, 90%);
+    width: min(400px, 90%);
 
     padding: 35px;
 
     border-radius: 20px;
 
     background: #191923;
-
-    border:
-        1px solid
-        rgba(255,255,255,0.1);
-
-    box-shadow:
-        0 25px 80px
-        rgba(0,0,0,0.5);
-}
-
-.modalContent h2 {
-    margin-top: 0;
 }
 
 .close {
@@ -494,9 +410,9 @@ main {
     right: 15px;
     top: 15px;
 
-    background: transparent;
-
     border: none;
+
+    background: transparent;
 
     color: white;
 
@@ -507,12 +423,9 @@ main {
 
 .stat {
     display: flex;
+    justify-content: space-between;
 
-    justify-content:
-        space-between;
-
-    padding:
-        18px 0;
+    padding: 18px 0;
 
     border-bottom:
         1px solid
@@ -531,11 +444,11 @@ main {
 footer {
     text-align: center;
 
-    color: #666;
-
-    font-size: 13px;
+    color: #555;
 
     padding: 20px;
+
+    font-size: 13px;
 }
 
 
@@ -543,27 +456,28 @@ footer {
    ANIMATIONS
 ========================= */
 
-@keyframes resultAppear {
-
+@keyframes titleAppear {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
     }
-
 }
 
+@keyframes buttonAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 
-/* =========================
-   HIDDEN
-========================= */
-
-.hidden {
-    display: none !important;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
@@ -578,8 +492,7 @@ footer {
     }
 
     .card {
-        padding:
-            40px 20px;
+        padding: 40px 20px;
     }
 
     .buttons {
@@ -589,9 +502,4 @@ footer {
     .buttons button {
         max-width: none;
     }
-
-    .startContent h1 {
-        letter-spacing: -2px;
-    }
-
 }

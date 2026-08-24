@@ -1,104 +1,38 @@
+const SUPABASE_URL =
+    "https://dfmkomjwpgbvxjudxlhi.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_hK8jFComIB90VipkRmFGZw_djxLU8jl";
+
+
 /* =====================================
-   QUESTIONS
+   SUPABASE
 ===================================== */
 
-const questions = [
+const { createClient } = supabase;
 
-    {
-        text: "It should be illegal to put pineapple on pizza.",
-        category: "FOOD",
-        agree: 68
-    },
-
-    {
-        text: "Money can buy happiness.",
-        category: "LIFE",
-        agree: 54
-    },
-
-    {
-        text: "Cereal is technically a soup.",
-        category: "FOOD",
-        agree: 31
-    },
-
-    {
-        text: "School should start at 10 AM instead of 8 AM.",
-        category: "SCHOOL",
-        agree: 82
-    },
-
-    {
-        text: "Cats are better pets than dogs.",
-        category: "ANIMALS",
-        agree: 43
-    },
-
-    {
-        text: "Summer is better than winter.",
-        category: "LIFESTYLE",
-        agree: 76
-    },
-
-    {
-        text: "Fries should always come with ketchup.",
-        category: "FOOD",
-        agree: 61
-    },
-
-    {
-        text: "Social media has made the world worse.",
-        category: "SOCIETY",
-        agree: 57
-    },
-
-    {
-        text: "The weekend should be three days long.",
-        category: "LIFE",
-        agree: 94
-    },
-
-    {
-        text: "Pizza is the best food ever created.",
-        category: "FOOD",
-        agree: 91
-    },
-
-    {
-        text: "Everyone should learn how to cook.",
-        category: "LIFE",
-        agree: 79
-    },
-
-    {
-        text: "Being famous would be worth losing your privacy.",
-        category: "LIFE",
-        agree: 27
-    }
-
-];
+const db = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =====================================
    VARIABLES
 ===================================== */
 
-let currentQuestion = 0;
+let questions = [];
+
+let currentQuestion = null;
 
 let totalAnswered =
-    Number(
-        localStorage.getItem("totalAnswered")
-    ) || 0;
+    Number(localStorage.getItem("totalAnswered")) || 0;
 
 let totalAgree =
-    Number(
-        localStorage.getItem("totalAgree")
-    ) || 0;
+    Number(localStorage.getItem("totalAgree")) || 0;
 
 let totalDisagree =
-    Number(
-        localStorage.getItem("totalDisagree")
-    ) || 0;
+    Number(localStorage.getItem("totalDisagree")) || 0;
 
 
 /* =====================================
@@ -149,65 +83,117 @@ const resultMessage =
 
 
 /* =====================================
-   START SCREEN
+   START
 ===================================== */
 
 startButton.addEventListener(
     "click",
-    startGame
+    async function () {
+
+        startScreen.style.opacity = "0";
+        startScreen.style.transform = "scale(1.05)";
+
+        setTimeout(() => {
+
+            startScreen.style.display = "none";
+
+            app.classList.add("active");
+
+        }, 600);
+
+        await loadQuestions();
+
+    }
 );
 
 
-function startGame() {
+/* =====================================
+   LOAD QUESTIONS FROM SUPABASE
+===================================== */
 
-    startScreen.style.opacity = "0";
+async function loadQuestions() {
 
-    startScreen.style.transform =
-        "scale(1.05)";
+    counter.textContent = "Loading questions...";
 
-    setTimeout(function() {
+    try {
 
-        startScreen.style.display =
-            "none";
+        const { data, error } =
+            await db
+                .from("questions")
+                .select("*");
 
-        app.classList.add("active");
+        if (error) {
+            throw error;
+        }
 
-    }, 600);
+        questions = data;
+
+        if (!questions.length) {
+
+            counter.textContent =
+                "No questions found.";
+
+            return;
+
+        }
+
+        loadRandomQuestion();
+
+    } catch (error) {
+
+        console.error(error);
+
+        counter.textContent =
+            "Couldn't load questions 😭";
+
+        question.textContent =
+            "Something went wrong connecting to the database.";
+
+    }
 
 }
 
 
 /* =====================================
-   LOAD QUESTION
+   RANDOM QUESTION
 ===================================== */
 
-function loadQuestion() {
+function loadRandomQuestion() {
 
-    const q =
-        questions[currentQuestion];
+    if (!questions.length) return;
+
+
+    const randomIndex =
+        Math.floor(
+            Math.random() * questions.length
+        );
+
+
+    currentQuestion =
+        questions[randomIndex];
 
 
     question.textContent =
-        `"${q.text}"`;
+        `"${currentQuestion.question}"`;
 
 
     category.textContent =
-        q.category;
+        currentQuestion.category;
 
 
     counter.textContent =
-        `Question ${currentQuestion + 1} of ${questions.length}`;
+        "What do you think?";
 
+
+    /* Reset */
 
     results.classList.add("hidden");
 
     nextButton.classList.add("hidden");
 
-
     agreeButton.disabled = false;
 
     disagreeButton.disabled = false;
-
 
     agreeBar.style.width = "50%";
 
@@ -215,92 +201,177 @@ function loadQuestion() {
 
 
 /* =====================================
-   VOTING
+   VOTE
 ===================================== */
 
 agreeButton.addEventListener(
     "click",
-    function() {
-
-        vote("agree");
-
-    }
+    () => submitVote("agree")
 );
 
 
 disagreeButton.addEventListener(
     "click",
-    function() {
-
-        vote("disagree");
-
-    }
+    () => submitVote("disagree")
 );
 
 
-function vote(type) {
+async function submitVote(vote) {
 
-    const q =
-        questions[currentQuestion];
-
-
-    const agree =
-        q.agree;
+    if (!currentQuestion) return;
 
 
-    const disagree =
-        100 - agree;
-
-
-    if (type === "agree") {
-
-        totalAgree++;
-
-    } else {
-
-        totalDisagree++;
-
-    }
-
-
-    totalAnswered++;
-
-
-    saveStats();
-
+    /* Prevent double clicking */
 
     agreeButton.disabled = true;
 
     disagreeButton.disabled = true;
 
 
+    try {
+
+        const { error } =
+            await db.rpc(
+                "submit_vote",
+                {
+                    p_question_id:
+                        currentQuestion.id,
+
+                    p_vote:
+                        vote
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        /* Save local stats */
+
+        totalAnswered++;
+
+
+        if (vote === "agree") {
+
+            totalAgree++;
+
+        } else {
+
+            totalDisagree++;
+
+        }
+
+
+        saveStats();
+
+
+        /* Get REAL percentages */
+
+        await showRealResults(vote);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        resultMessage.textContent =
+            "Couldn't save your vote 😭";
+
+        results.classList.remove(
+            "hidden"
+        );
+
+        agreeButton.disabled = false;
+
+        disagreeButton.disabled = false;
+
+    }
+
+}
+
+
+/* =====================================
+   GET REAL RESULTS
+===================================== */
+
+async function showRealResults(userVote) {
+
+    const { data, error } =
+        await db
+            .from("votes")
+            .select("vote")
+            .eq(
+                "question_id",
+                currentQuestion.id
+            );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    const total =
+        data.length;
+
+
+    if (total === 0) return;
+
+
+    const agreeVotes =
+        data.filter(
+            v => v.vote === "agree"
+        ).length;
+
+
+    const disagreeVotes =
+        total - agreeVotes;
+
+
+    const agreePercentage =
+        Math.round(
+            (agreeVotes / total) * 100
+        );
+
+
+    const disagreePercentage =
+        100 - agreePercentage;
+
+
+    /* Display */
+
     agreePercent.textContent =
-        agree + "%";
+        agreePercentage + "%";
 
 
     disagreePercent.textContent =
-        disagree + "%";
+        disagreePercentage + "%";
 
 
-    setTimeout(function() {
+    setTimeout(() => {
 
         agreeBar.style.width =
-            agree + "%";
+            agreePercentage + "%";
 
     }, 50);
 
 
-    const userAgrees =
-        type === "agree";
-
+    /* Message */
 
     const majorityAgrees =
-        agree >= 50;
+        agreePercentage >= 50;
+
+
+    const userAgrees =
+        userVote === "agree";
 
 
     if (
-        userAgrees ===
-        majorityAgrees
+        userAgrees === majorityAgrees
     ) {
 
         resultMessage.textContent =
@@ -314,9 +385,14 @@ function vote(type) {
     }
 
 
-    results.classList.remove("hidden");
+    results.classList.remove(
+        "hidden"
+    );
 
-    nextButton.classList.remove("hidden");
+
+    nextButton.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -327,32 +403,12 @@ function vote(type) {
 
 nextButton.addEventListener(
     "click",
-    nextQuestion
+    loadRandomQuestion
 );
 
 
-function nextQuestion() {
-
-    currentQuestion++;
-
-
-    if (
-        currentQuestion >=
-        questions.length
-    ) {
-
-        currentQuestion = 0;
-
-    }
-
-
-    loadQuestion();
-
-}
-
-
 /* =====================================
-   SAVE STATS
+   LOCAL STATS
 ===================================== */
 
 function saveStats() {
@@ -376,7 +432,7 @@ function saveStats() {
 
 
 /* =====================================
-   STATS
+   STATS MODAL
 ===================================== */
 
 const statsButton =
@@ -391,7 +447,7 @@ const closeStats =
 
 statsButton.addEventListener(
     "click",
-    function() {
+    function () {
 
         document.getElementById(
             "totalAnswered"
@@ -421,7 +477,7 @@ statsButton.addEventListener(
 
 closeStats.addEventListener(
     "click",
-    function() {
+    function () {
 
         statsModal.classList.add(
             "hidden"
@@ -429,10 +485,3 @@ closeStats.addEventListener(
 
     }
 );
-
-
-/* =====================================
-   INITIALIZE
-===================================== */
-
-loadQuestion();

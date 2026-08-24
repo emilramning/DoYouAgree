@@ -3,140 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Do You Agree?</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-
-        /* START SCREEN */
-        #startScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-
-            background: #101018;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            z-index: 999999;
-        }
-
-        #startContent {
-            text-align: center;
-        }
-
-        #startContent h1 {
-            color: white;
-            font-size: 70px;
-            margin: 0 0 40px;
-        }
-
-        #startButton {
-            background: white;
-            color: black;
-
-            border: none;
-            border-radius: 12px;
-
-            padding: 18px 60px;
-
-            font-size: 20px;
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        #startButton:hover {
-            transform: scale(1.05);
-        }
-
-        /* ACTUAL WEBSITE */
-        #app {
-            display: none;
-
-            width: 100%;
-            height: 100%;
-
-            background: #101018;
-            color: white;
-        }
-
-        header {
-            height: 70px;
-            padding: 0 30px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            border-bottom: 1px solid #333;
-        }
-
-        main {
-            max-width: 800px;
-            margin: 80px auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .card {
-            background: #1c1c28;
-            border: 1px solid #333;
-            border-radius: 20px;
-            padding: 50px;
-        }
-
-        #question {
-            font-size: 42px;
-            margin-bottom: 40px;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .buttons button {
-            flex: 1;
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .agree {
-            background: #20a464;
-        }
-
-        .disagree {
-            background: #d84848;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- THIS IS THE START SCREEN -->
+    <!-- =========================
+         START SCREEN
+    ========================== -->
+
     <div id="startScreen">
 
-        <div id="startContent">
+        <div class="startContent">
 
             <h1>Do you agree?</h1>
 
@@ -149,65 +30,199 @@
     </div>
 
 
-    <!-- MAIN WEBSITE -->
+    <!-- =========================
+         MAIN WEBSITE
+    ========================== -->
+
     <div id="app">
+
+        <!-- HEADER -->
 
         <header>
 
-            <strong>Do You Agree?</strong>
+            <div class="logo">
+                Do You Agree?
+            </div>
 
-            <button>📊 My Stats</button>
+            <button id="statsButton" class="statsButton">
+                📊 My Stats
+            </button>
 
         </header>
 
+
+        <!-- MAIN -->
+
         <main>
 
-            <div class="card">
+            <div id="counter" class="counter">
+                Question 1
+            </div>
 
-                <div id="category">
+
+            <div class="questionCard">
+
+                <div id="category" class="category">
                     FOOD
                 </div>
 
-                <h1 id="question">
-                    "It should be illegal to put pineapple on pizza."
-                </h1>
 
-                <div class="buttons">
+                <h2 id="question">
+                    It should be illegal to put pineapple on pizza.
+                </h2>
 
-                    <button class="agree">
-                        👍 AGREE
+
+                <!-- VOTE BUTTONS -->
+
+                <div class="voteButtons">
+
+                    <button id="agreeButton" class="vote agree">
+                        👍
+                        <span>AGREE</span>
                     </button>
 
-                    <button class="disagree">
-                        👎 DON'T AGREE
+
+                    <button id="disagreeButton" class="vote disagree">
+                        👎
+                        <span>DON'T AGREE</span>
                     </button>
+
+                </div>
+
+
+                <!-- RESULTS -->
+
+                <div id="results" class="results hidden">
+
+                    <p class="resultTitle">
+                        Here's what people think
+                    </p>
+
+
+                    <div class="percentages">
+
+                        <div class="percentage">
+
+                            <strong id="agreePercent">
+                                0%
+                            </strong>
+
+                            <span>
+                                Agree
+                            </span>
+
+                        </div>
+
+
+                        <div class="percentage">
+
+                            <strong id="disagreePercent">
+                                0%
+                            </strong>
+
+                            <span>
+                                Don't Agree
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BAR -->
+
+                    <div class="resultBar">
+
+                        <div id="agreeBar"></div>
+
+                    </div>
+
+
+                    <p id="resultMessage" class="resultMessage"></p>
 
                 </div>
 
             </div>
 
+
+            <!-- NEXT -->
+
+            <button id="nextButton" class="nextButton hidden">
+                Next Question →
+            </button>
+
         </main>
+
+
+        <!-- =========================
+             STATS MODAL
+        ========================== -->
+
+        <div id="statsModal" class="modal hidden">
+
+            <div class="modalBox">
+
+                <button id="closeStats" class="closeButton">
+                    ×
+                </button>
+
+
+                <h2>
+                    📊 Your Stats
+                </h2>
+
+
+                <div class="statRow">
+
+                    <span>
+                        Questions answered
+                    </span>
+
+                    <strong id="totalAnswered">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="statRow">
+
+                    <span>
+                        Agreed
+                    </span>
+
+                    <strong id="totalAgree">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="statRow">
+
+                    <span>
+                        Didn't agree
+                    </span>
+
+                    <strong id="totalDisagree">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <footer>
+            Made for people who have opinions.
+        </footer>
 
     </div>
 
 
-    <script>
-
-        document
-            .getElementById("startButton")
-            .onclick = function() {
-
-                document
-                    .getElementById("startScreen")
-                    .style.display = "none";
-
-                document
-                    .getElementById("app")
-                    .style.display = "block";
-
-            };
-
-    </script>
+    <script src="script.js"></script>
 
 </body>
 </html>

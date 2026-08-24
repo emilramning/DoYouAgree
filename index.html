@@ -3,283 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 98 Simulator</title>
+    <title>Do You Agree?</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- BOOT SCREEN -->
-    <div id="bootScreen">
-        <div class="bootLogo">Microsoft <span>Windows</span></div>
-        <div class="boot98">Windows 98</div>
+    <header>
+        <div class="logo">Do You Agree?</div>
 
-        <div class="loadingBox">
-            <div id="loadingBar"></div>
+        <button class="stats-btn" onclick="showStats()">
+            📊 My Stats
+        </button>
+    </header>
+
+    <main>
+
+        <div class="counter" id="counter">
+            Question 1
         </div>
 
-        <div class="bootText">Starting Windows 98...</div>
-    </div>
+        <div class="card">
 
-    <!-- DESKTOP -->
-    <div id="desktop">
-
-        <!-- Desktop Icons -->
-        <div class="desktop-icons">
-
-            <div class="desktop-icon" ondblclick="openWindow('computerWindow')">
-                <div class="icon">💻</div>
-                <span>My Computer</span>
+            <div class="category" id="category">
+                FOOD
             </div>
 
-            <div class="desktop-icon" ondblclick="openWindow('documentsWindow')">
-                <div class="icon">📁</div>
-                <span>My Documents</span>
+            <h1 id="question">
+                It should be illegal to put pineapple on pizza.
+            </h1>
+
+            <div class="buttons">
+
+                <button class="agree" onclick="vote('agree')">
+                    <span>👍</span>
+                    AGREE
+                </button>
+
+                <button class="disagree" onclick="vote('disagree')">
+                    <span>👎</span>
+                    DON'T AGREE
+                </button>
+
             </div>
 
-            <div class="desktop-icon" ondblclick="openWindow('notepadWindow')">
-                <div class="icon">📝</div>
-                <span>Notepad</span>
-            </div>
+            <div id="results" class="results hidden">
 
-            <div class="desktop-icon" ondblclick="openWindow('paintWindow')">
-                <div class="icon">🎨</div>
-                <span>Paint</span>
-            </div>
+                <div class="result-title">
+                    Here's what people think:
+                </div>
 
-            <div class="desktop-icon" ondblclick="openWindow('calculatorWindow')">
-                <div class="icon">🧮</div>
-                <span>Calculator</span>
-            </div>
+                <div class="percentages">
 
-            <div class="desktop-icon" ondblclick="openWindow('internetWindow')">
-                <div class="icon">🌐</div>
-                <span>Internet Explorer</span>
-            </div>
+                    <div>
+                        <strong id="agreePercent">0%</strong>
+                        <span>Agree</span>
+                    </div>
 
-            <div class="desktop-icon" ondblclick="openMinesweeper()">
-                <div class="icon">💣</div>
-                <span>Minesweeper</span>
-            </div>
+                    <div>
+                        <strong id="disagreePercent">0%</strong>
+                        <span>Don't Agree</span>
+                    </div>
 
-            <div class="desktop-icon">
-                <div class="icon">🗑️</div>
-                <span>Recycle Bin</span>
+                </div>
+
+                <div class="bar">
+                    <div id="agreeBar"></div>
+                </div>
+
+                <p id="resultMessage"></p>
+
             </div>
 
         </div>
 
-        <!-- WINDOWS -->
+        <button id="nextButton" class="next hidden" onclick="nextQuestion()">
+            Next Question →
+        </button>
 
-        <!-- MY COMPUTER -->
-        <div class="window" id="computerWindow">
-            <div class="titlebar">
-                <span>💻 My Computer</span>
-                <div>
-                    <button onclick="minimizeWindow('computerWindow')">_</button>
-                    <button onclick="maximizeWindow('computerWindow')">□</button>
-                    <button onclick="closeWindow('computerWindow')">×</button>
-                </div>
+    </main>
+
+    <div id="statsModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <button class="close" onclick="closeStats()">×</button>
+
+            <h2>📊 Your Stats</h2>
+
+            <div class="stat">
+                <span>Questions answered</span>
+                <strong id="totalAnswered">0</strong>
             </div>
 
-            <div class="window-content explorer">
-                <div class="drive">💾 <b>3½ Floppy (A:)</b></div>
-                <div class="drive">💿 <b>CD Drive (D:)</b></div>
-                <div class="drive">💻 <b>Local Disk (C:)</b></div>
-            </div>
-        </div>
-
-        <!-- DOCUMENTS -->
-        <div class="window" id="documentsWindow">
-            <div class="titlebar">
-                <span>📁 My Documents</span>
-                <div>
-                    <button onclick="minimizeWindow('documentsWindow')">_</button>
-                    <button onclick="maximizeWindow('documentsWindow')">□</button>
-                    <button onclick="closeWindow('documentsWindow')">×</button>
-                </div>
+            <div class="stat">
+                <span>Agreed</span>
+                <strong id="totalAgree">0</strong>
             </div>
 
-            <div class="window-content">
-                <div class="file">📄 Welcome.txt</div>
-                <div class="file">📄 homework.txt</div>
-                <div class="file">🖼️ vacation.bmp</div>
+            <div class="stat">
+                <span>Didn't agree</span>
+                <strong id="totalDisagree">0</strong>
             </div>
-        </div>
-
-        <!-- NOTEPAD -->
-        <div class="window" id="notepadWindow">
-            <div class="titlebar">
-                <span>📝 Notepad</span>
-                <div>
-                    <button onclick="minimizeWindow('notepadWindow')">_</button>
-                    <button onclick="maximizeWindow('notepadWindow')">□</button>
-                    <button onclick="closeWindow('notepadWindow')">×</button>
-                </div>
-            </div>
-
-            <div class="window-content notepad">
-                <textarea placeholder="Type something..."></textarea>
-            </div>
-        </div>
-
-        <!-- PAINT -->
-        <div class="window" id="paintWindow">
-            <div class="titlebar">
-                <span>🎨 Paint</span>
-                <div>
-                    <button onclick="minimizeWindow('paintWindow')">_</button>
-                    <button onclick="maximizeWindow('paintWindow')">□</button>
-                    <button onclick="closeWindow('paintWindow')">×</button>
-                </div>
-            </div>
-
-            <div class="paint-toolbar">
-                <button onclick="setTool('pen')">✏️</button>
-                <button onclick="clearCanvas()">🗑️</button>
-            </div>
-
-            <canvas id="paintCanvas" width="500" height="330"></canvas>
-        </div>
-
-        <!-- CALCULATOR -->
-        <div class="window calculator" id="calculatorWindow">
-            <div class="titlebar">
-                <span>🧮 Calculator</span>
-                <div>
-                    <button onclick="minimizeWindow('calculatorWindow')">_</button>
-                    <button onclick="closeWindow('calculatorWindow')">×</button>
-                </div>
-            </div>
-
-            <input id="calcDisplay" readonly>
-
-            <div class="calcButtons">
-                <button onclick="calc('7')">7</button>
-                <button onclick="calc('8')">8</button>
-                <button onclick="calc('9')">9</button>
-                <button onclick="calc('/')">÷</button>
-
-                <button onclick="calc('4')">4</button>
-                <button onclick="calc('5')">5</button>
-                <button onclick="calc('6')">6</button>
-                <button onclick="calc('*')">×</button>
-
-                <button onclick="calc('1')">1</button>
-                <button onclick="calc('2')">2</button>
-                <button onclick="calc('3')">3</button>
-                <button onclick="calc('-')">−</button>
-
-                <button onclick="calc('0')">0</button>
-                <button onclick="calc('.')">.</button>
-                <button onclick="calculate()">=</button>
-                <button onclick="calc('+')">+</button>
-
-                <button onclick="clearCalc()">C</button>
-            </div>
-        </div>
-
-        <!-- INTERNET EXPLORER -->
-        <div class="window internet" id="internetWindow">
-            <div class="titlebar">
-                <span>🌐 Internet Explorer</span>
-                <div>
-                    <button onclick="minimizeWindow('internetWindow')">_</button>
-                    <button onclick="maximizeWindow('internetWindow')">□</button>
-                    <button onclick="closeWindow('internetWindow')">×</button>
-                </div>
-            </div>
-
-            <div class="browser-bar">
-                <input value="http://www.example.com">
-                <button onclick="fakeInternet()">Go</button>
-            </div>
-
-            <div class="browser-page" id="browserPage">
-                <h1>Welcome to the Internet!</h1>
-                <p>You've successfully connected to the World Wide Web.</p>
-                <hr>
-                <p>🌐 Best viewed in Internet Explorer 4.0</p>
-                <p>⚡ 56K Dial-Up Connection</p>
-            </div>
-        </div>
-
-        <!-- MINESWEEPER -->
-        <div class="window minesweeper" id="minesweeperWindow">
-            <div class="titlebar">
-                <span>💣 Minesweeper</span>
-                <div>
-                    <button onclick="closeWindow('minesweeperWindow')">×</button>
-                </div>
-            </div>
-
-            <div class="mine-header">
-                <span id="mineCount">010</span>
-                <button onclick="newGame()">🙂</button>
-                <span id="mineTimer">000</span>
-            </div>
-
-            <div id="mineGrid"></div>
-        </div>
-
-        <!-- START MENU -->
-        <div id="startMenu">
-
-            <div class="startSide">
-                <span>Windows</span>
-                <b>98</b>
-            </div>
-
-            <div class="startItems">
-
-                <div onclick="openWindow('computerWindow')">
-                    💻 <span>My Computer</span>
-                </div>
-
-                <div onclick="openWindow('documentsWindow')">
-                    📁 <span>My Documents</span>
-                </div>
-
-                <div onclick="openWindow('notepadWindow')">
-                    📝 <span>Notepad</span>
-                </div>
-
-                <div onclick="openWindow('paintWindow')">
-                    🎨 <span>Paint</span>
-                </div>
-
-                <div onclick="openWindow('calculatorWindow')">
-                    🧮 <span>Calculator</span>
-                </div>
-
-                <div onclick="openMinesweeper()">
-                    💣 <span>Minesweeper</span>
-                </div>
-
-                <hr>
-
-                <div onclick="shutdown()">
-                    🔌 <span>Shut Down...</span>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- TASKBAR -->
-        <div id="taskbar">
-
-            <button id="startButton" onclick="toggleStartMenu()">
-                🪟 <b>Start</b>
-            </button>
-
-            <div id="taskbarApps"></div>
-
-            <div id="clock"></div>
 
         </div>
 
     </div>
+
+    <footer>
+        Made for people who have opinions.
+    </footer>
 
     <script src="script.js"></script>
+
 </body>
 </html>

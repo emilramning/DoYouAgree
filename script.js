@@ -1,3 +1,7 @@
+/* =====================================
+   QUESTIONS
+===================================== */
+
 const questions = [
 
     {
@@ -58,219 +62,298 @@ const questions = [
         text: "Pizza is the best food ever created.",
         category: "FOOD",
         agree: 91
+    },
+
+    {
+        text: "Everyone should learn how to cook.",
+        category: "LIFE",
+        agree: 79
+    },
+
+    {
+        text: "Being famous would be worth losing your privacy.",
+        category: "LIFE",
+        agree: 27
     }
 
 ];
 
 
+/* =====================================
+   VARIABLES
+===================================== */
+
 let currentQuestion = 0;
 
 let totalAnswered =
-    Number(localStorage.getItem("totalAnswered")) || 0;
+    Number(
+        localStorage.getItem("totalAnswered")
+    ) || 0;
 
 let totalAgree =
-    Number(localStorage.getItem("totalAgree")) || 0;
+    Number(
+        localStorage.getItem("totalAgree")
+    ) || 0;
 
 let totalDisagree =
-    Number(localStorage.getItem("totalDisagree")) || 0;
+    Number(
+        localStorage.getItem("totalDisagree")
+    ) || 0;
 
 
-/* =========================
-   START
-========================= */
+/* =====================================
+   ELEMENTS
+===================================== */
 
-document
-    .getElementById("startButton")
-    .addEventListener("click", startGame);
+const startScreen =
+    document.getElementById("startScreen");
+
+const startButton =
+    document.getElementById("startButton");
+
+const app =
+    document.getElementById("app");
+
+const question =
+    document.getElementById("question");
+
+const category =
+    document.getElementById("category");
+
+const counter =
+    document.getElementById("counter");
+
+const agreeButton =
+    document.getElementById("agreeButton");
+
+const disagreeButton =
+    document.getElementById("disagreeButton");
+
+const results =
+    document.getElementById("results");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const agreePercent =
+    document.getElementById("agreePercent");
+
+const disagreePercent =
+    document.getElementById("disagreePercent");
+
+const agreeBar =
+    document.getElementById("agreeBar");
+
+const resultMessage =
+    document.getElementById("resultMessage");
+
+
+/* =====================================
+   START SCREEN
+===================================== */
+
+startButton.addEventListener(
+    "click",
+    startGame
+);
 
 
 function startGame() {
 
-    const startScreen =
-        document.getElementById("startScreen");
+    startScreen.style.opacity = "0";
 
-    const app =
-        document.getElementById("app");
+    startScreen.style.transform =
+        "scale(1.05)";
 
-    startScreen.classList.add("hide");
+    setTimeout(function() {
 
-    setTimeout(() => {
-
-        startScreen.style.display = "none";
+        startScreen.style.display =
+            "none";
 
         app.classList.add("active");
 
     }, 600);
+
 }
 
 
-/* =========================
+/* =====================================
    LOAD QUESTION
-========================= */
+===================================== */
 
 function loadQuestion() {
 
-    const q = questions[currentQuestion];
+    const q =
+        questions[currentQuestion];
 
-    document.getElementById("question")
-        .textContent =
+
+    question.textContent =
         `"${q.text}"`;
 
-    document.getElementById("category")
-        .textContent =
+
+    category.textContent =
         q.category;
 
-    document.getElementById("counter")
-        .textContent =
+
+    counter.textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
-    document
-        .getElementById("results")
-        .classList.add("hidden");
 
-    document
-        .getElementById("nextButton")
-        .classList.add("hidden");
+    results.classList.add("hidden");
 
-    document
-        .getElementById("agreeButton")
-        .disabled = false;
+    nextButton.classList.add("hidden");
 
-    document
-        .getElementById("disagreeButton")
-        .disabled = false;
 
-    document
-        .getElementById("agreeBar")
-        .style.width = "50%";
+    agreeButton.disabled = false;
+
+    disagreeButton.disabled = false;
+
+
+    agreeBar.style.width = "50%";
+
 }
 
 
-/* =========================
-   VOTE
-========================= */
+/* =====================================
+   VOTING
+===================================== */
 
-document
-    .getElementById("agreeButton")
-    .addEventListener(
-        "click",
-        () => vote("agree")
-    );
+agreeButton.addEventListener(
+    "click",
+    function() {
 
-document
-    .getElementById("disagreeButton")
-    .addEventListener(
-        "click",
-        () => vote("disagree")
-    );
+        vote("agree");
+
+    }
+);
+
+
+disagreeButton.addEventListener(
+    "click",
+    function() {
+
+        vote("disagree");
+
+    }
+);
 
 
 function vote(type) {
 
-    const q = questions[currentQuestion];
+    const q =
+        questions[currentQuestion];
 
-    const agreePercent = q.agree;
 
-    const disagreePercent =
-        100 - agreePercent;
+    const agree =
+        q.agree;
+
+
+    const disagree =
+        100 - agree;
 
 
     if (type === "agree") {
+
         totalAgree++;
+
     } else {
+
         totalDisagree++;
+
     }
 
+
     totalAnswered++;
+
 
     saveStats();
 
 
-    document
-        .getElementById("agreeButton")
-        .disabled = true;
+    agreeButton.disabled = true;
 
-    document
-        .getElementById("disagreeButton")
-        .disabled = true;
+    disagreeButton.disabled = true;
 
 
-    document
-        .getElementById("agreePercent")
-        .textContent =
-        agreePercent + "%";
-
-    document
-        .getElementById("disagreePercent")
-        .textContent =
-        disagreePercent + "%";
+    agreePercent.textContent =
+        agree + "%";
 
 
-    setTimeout(() => {
+    disagreePercent.textContent =
+        disagree + "%";
 
-        document
-            .getElementById("agreeBar")
-            .style.width =
-            agreePercent + "%";
+
+    setTimeout(function() {
+
+        agreeBar.style.width =
+            agree + "%";
 
     }, 50);
 
 
-    const userAgreed =
+    const userAgrees =
         type === "agree";
 
+
     const majorityAgrees =
-        agreePercent >= 50;
+        agree >= 50;
 
 
-    document
-        .getElementById("resultMessage")
-        .textContent =
-        userAgreed === majorityAgrees
-            ? "You're with the majority! 😎"
-            : "You're in the minority. Bold move. 😭";
+    if (
+        userAgrees ===
+        majorityAgrees
+    ) {
+
+        resultMessage.textContent =
+            "You're with the majority! 😎";
+
+    } else {
+
+        resultMessage.textContent =
+            "You're in the minority. Bold move. 😭";
+
+    }
 
 
-    document
-        .getElementById("results")
-        .classList.remove("hidden");
+    results.classList.remove("hidden");
 
-    document
-        .getElementById("nextButton")
-        .classList.remove("hidden");
+    nextButton.classList.remove("hidden");
+
 }
 
 
-/* =========================
+/* =====================================
    NEXT QUESTION
-========================= */
+===================================== */
 
-document
-    .getElementById("nextButton")
-    .addEventListener(
-        "click",
-        nextQuestion
-    );
+nextButton.addEventListener(
+    "click",
+    nextQuestion
+);
 
 
 function nextQuestion() {
 
     currentQuestion++;
 
+
     if (
         currentQuestion >=
         questions.length
     ) {
+
         currentQuestion = 0;
+
     }
 
+
     loadQuestion();
+
 }
 
 
-/* =========================
-   STATS
-========================= */
+/* =====================================
+   SAVE STATS
+===================================== */
 
 function saveStats() {
 
@@ -288,52 +371,68 @@ function saveStats() {
         "totalDisagree",
         totalDisagree
     );
+
 }
 
 
-document
-    .getElementById("statsButton")
-    .addEventListener(
-        "click",
-        () => {
+/* =====================================
+   STATS
+===================================== */
 
-            document
-                .getElementById("totalAnswered")
-                .textContent =
-                totalAnswered;
+const statsButton =
+    document.getElementById("statsButton");
 
-            document
-                .getElementById("totalAgree")
-                .textContent =
-                totalAgree;
+const statsModal =
+    document.getElementById("statsModal");
 
-            document
-                .getElementById("totalDisagree")
-                .textContent =
-                totalDisagree;
-
-            document
-                .getElementById("statsModal")
-                .classList.remove("hidden");
-        }
-    );
+const closeStats =
+    document.getElementById("closeStats");
 
 
-document
-    .getElementById("closeStats")
-    .addEventListener(
-        "click",
-        () => {
+statsButton.addEventListener(
+    "click",
+    function() {
 
-            document
-                .getElementById("statsModal")
-                .classList.add("hidden");
-        }
-    );
+        document.getElementById(
+            "totalAnswered"
+        ).textContent =
+            totalAnswered;
 
 
-/* =========================
-   START WITH APP HIDDEN
-========================= */
+        document.getElementById(
+            "totalAgree"
+        ).textContent =
+            totalAgree;
+
+
+        document.getElementById(
+            "totalDisagree"
+        ).textContent =
+            totalDisagree;
+
+
+        statsModal.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+closeStats.addEventListener(
+    "click",
+    function() {
+
+        statsModal.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
 
 loadQuestion();

@@ -1,91 +1,182 @@
+/* =========================
+   QUESTIONS
+========================= */
+
 const questions = [
 
     {
-        text: "It should be illegal to put pineapple on pizza.",
+        text:
+            "It should be illegal to put pineapple on pizza.",
         category: "FOOD",
         agree: 68
     },
 
     {
-        text: "Money can buy happiness.",
+        text:
+            "Money can buy happiness.",
         category: "LIFE",
         agree: 54
     },
 
     {
-        text: "Cereal is technically a soup.",
+        text:
+            "Cereal is technically a soup.",
         category: "FOOD",
         agree: 31
     },
 
     {
-        text: "School should start at 10 AM instead of 8 AM.",
+        text:
+            "School should start at 10 AM instead of 8 AM.",
         category: "SCHOOL",
         agree: 82
     },
 
     {
-        text: "Cats are better pets than dogs.",
+        text:
+            "Cats are better pets than dogs.",
         category: "ANIMALS",
         agree: 43
     },
 
     {
-        text: "Summer is better than winter.",
+        text:
+            "Summer is better than winter.",
         category: "LIFESTYLE",
         agree: 76
     },
 
     {
-        text: "Fries should always come with ketchup.",
+        text:
+            "Fries should always come with ketchup.",
         category: "FOOD",
         agree: 61
     },
 
     {
-        text: "Social media has made the world worse.",
+        text:
+            "Social media has made the world worse.",
         category: "SOCIETY",
         agree: 57
     },
 
     {
-        text: "You should never text someone back immediately.",
+        text:
+            "You should never text someone back immediately.",
         category: "SOCIAL",
         agree: 29
     },
 
     {
-        text: "Pizza is the best food ever created.",
+        text:
+            "Pizza is the best food ever created.",
         category: "FOOD",
         agree: 91
+    },
+
+    {
+        text:
+            "Money is more important than happiness.",
+        category: "LIFE",
+        agree: 34
+    },
+
+    {
+        text:
+            "Everyone should have to learn how to cook.",
+        category: "LIFE",
+        agree: 79
+    },
+
+    {
+        text:
+            "The weekend should be three days long.",
+        category: "SCHOOL",
+        agree: 94
+    },
+
+    {
+        text:
+            "Watching movies is better than watching TV shows.",
+        category: "ENTERTAINMENT",
+        agree: 46
+    },
+
+    {
+        text:
+            "Being famous would be worth losing your privacy.",
+        category: "LIFE",
+        agree: 27
     }
 
 ];
 
+
+/* =========================
+   VARIABLES
+========================= */
+
 let currentQuestion = 0;
 
 let totalAnswered =
-    Number(localStorage.getItem("totalAnswered")) || 0;
+    Number(
+        localStorage.getItem("totalAnswered")
+    ) || 0;
 
 let totalAgree =
-    Number(localStorage.getItem("totalAgree")) || 0;
+    Number(
+        localStorage.getItem("totalAgree")
+    ) || 0;
 
 let totalDisagree =
-    Number(localStorage.getItem("totalDisagree")) || 0;
+    Number(
+        localStorage.getItem("totalDisagree")
+    ) || 0;
 
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame() {
+
+    const startScreen =
+        document.getElementById("startScreen");
+
+    startScreen.classList.add("hide");
+
+    setTimeout(() => {
+
+        startScreen.style.display =
+            "none";
+
+    }, 600);
+}
+
+
+/* =========================
+   LOAD QUESTION
+========================= */
 
 function loadQuestion() {
 
-    const q = questions[currentQuestion];
+    const question =
+        questions[currentQuestion];
 
-    document.getElementById("question").textContent =
-        `"${q.text}"`;
+    document.getElementById("question")
+        .textContent =
+        `"${question.text}"`;
 
-    document.getElementById("category").textContent =
-        q.category;
+    document.getElementById("category")
+        .textContent =
+        question.category;
 
-    document.getElementById("counter").textContent =
+    document.getElementById("counter")
+        .textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
+
+
+    /* Reset results */
 
     document.getElementById("results")
         .classList.add("hidden");
@@ -93,46 +184,128 @@ function loadQuestion() {
     document.getElementById("nextButton")
         .classList.add("hidden");
 
-    document.querySelector(".agree").disabled = false;
-    document.querySelector(".disagree").disabled = false;
+
+    /* Enable buttons */
+
+    document.querySelector(".agree")
+        .disabled = false;
+
+    document.querySelector(".disagree")
+        .disabled = false;
+
+
+    /* Reset bar */
+
+    document.getElementById("agreeBar")
+        .style.width = "50%";
 }
 
 
+/* =========================
+   VOTE
+========================= */
+
 function vote(type) {
 
-    const q = questions[currentQuestion];
+    const question =
+        questions[currentQuestion];
 
-    let agreePercent = q.agree;
+    const agreePercent =
+        question.agree;
+
+    const disagreePercent =
+        100 - agreePercent;
+
+
+    /* Save user stats */
 
     if (type === "agree") {
+
         totalAgree++;
+
     } else {
+
         totalDisagree++;
+
     }
 
     totalAnswered++;
 
     saveStats();
 
-    document.querySelector(".agree").disabled = true;
-    document.querySelector(".disagree").disabled = true;
 
-    document.getElementById("agreePercent").textContent =
+    /* Disable buttons */
+
+    document.querySelector(".agree")
+        .disabled = true;
+
+    document.querySelector(".disagree")
+        .disabled = true;
+
+
+    /* Show percentages */
+
+    document.getElementById("agreePercent")
+        .textContent =
         agreePercent + "%";
 
-    document.getElementById("disagreePercent").textContent =
-        (100 - agreePercent) + "%";
+    document.getElementById("disagreePercent")
+        .textContent =
+        disagreePercent + "%";
 
-    document.getElementById("agreeBar").style.width =
-        agreePercent + "%";
 
-    const message =
-        type === "agree"
-            ? "You agree with the majority! 👀"
-            : "You're going against the majority. Bold move. 😭";
+    /* Animate bar */
 
-    document.getElementById("resultMessage").textContent =
+    setTimeout(() => {
+
+        document.getElementById("agreeBar")
+            .style.width =
+            agreePercent + "%";
+
+    }, 50);
+
+
+    /* Message */
+
+    let message;
+
+    if (type === "agree") {
+
+        if (agreePercent >= 50) {
+
+            message =
+                "You're with the majority! 😎";
+
+        } else {
+
+            message =
+                "You're in the minority. Bold move. 😭";
+
+        }
+
+    } else {
+
+        if (disagreePercent >= 50) {
+
+            message =
+                "You're with the majority! 😎";
+
+        } else {
+
+            message =
+                "You're in the minority. Brave. 💀";
+
+        }
+
+    }
+
+
+    document.getElementById("resultMessage")
+        .textContent =
         message;
+
+
+    /* Show results */
 
     document.getElementById("results")
         .classList.remove("hidden");
@@ -142,17 +315,35 @@ function vote(type) {
 }
 
 
+/* =========================
+   NEXT QUESTION
+========================= */
+
 function nextQuestion() {
 
     currentQuestion++;
 
-    if (currentQuestion >= questions.length) {
+    if (
+        currentQuestion >=
+        questions.length
+    ) {
+
         currentQuestion = 0;
+
     }
 
     loadQuestion();
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
+
+/* =========================
+   SAVE STATS
+========================= */
 
 function saveStats() {
 
@@ -173,15 +364,22 @@ function saveStats() {
 }
 
 
+/* =========================
+   STATS
+========================= */
+
 function showStats() {
 
-    document.getElementById("totalAnswered").textContent =
+    document.getElementById("totalAnswered")
+        .textContent =
         totalAnswered;
 
-    document.getElementById("totalAgree").textContent =
+    document.getElementById("totalAgree")
+        .textContent =
         totalAgree;
 
-    document.getElementById("totalDisagree").textContent =
+    document.getElementById("totalDisagree")
+        .textContent =
         totalDisagree;
 
     document.getElementById("statsModal")
@@ -195,5 +393,9 @@ function closeStats() {
         .classList.add("hidden");
 }
 
+
+/* =========================
+   LOAD FIRST QUESTION
+========================= */
 
 loadQuestion();

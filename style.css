@@ -5,84 +5,95 @@
 html,
 body {
     margin: 0;
+    padding: 0;
+
     width: 100%;
     min-height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-}
 
-body {
+    font-family: Arial, Helvetica, sans-serif;
+
     background: #0b0b12;
+
     color: white;
 }
 
 
-/* =========================
+/* =====================================
    START SCREEN
-========================= */
+===================================== */
 
 #startScreen {
+
     position: fixed;
-    inset: 0;
+
+    top: 0;
+    left: 0;
 
     width: 100vw;
     height: 100vh;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     background:
         radial-gradient(
             circle at center,
-            #292943 0%,
-            #11111b 50%,
-            #08080d 100%
+            #292941 0%,
+            #141420 45%,
+            #09090e 100%
         );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
 
     z-index: 999999;
 
-    opacity: 1;
-    visibility: visible;
-
     transition:
         opacity 0.6s ease,
-        visibility 0.6s ease,
         transform 0.6s ease;
+
 }
 
-#startScreen.hide {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(1.05);
-}
 
 .startContent {
+
     text-align: center;
+
 }
 
-.startContent h1 {
-    margin: 0 0 40px;
 
-    font-size: clamp(48px, 8vw, 90px);
+.startContent h1 {
+
+    margin: 0;
+
+    margin-bottom: 40px;
+
+    font-size: clamp(
+        48px,
+        8vw,
+        85px
+    );
 
     font-weight: 800;
 
     letter-spacing: -4px;
 
-    animation: titleAppear 0.8s ease;
 }
 
+
 #startButton {
+
     border: none;
 
-    padding: 18px 65px;
+    background: white;
+
+    color: #111;
+
+    padding: 18px 60px;
 
     border-radius: 14px;
 
-    background: white;
-    color: #111;
-
     font-size: 18px;
+
     font-weight: 800;
 
     cursor: pointer;
@@ -91,66 +102,91 @@ body {
         transform 0.2s ease,
         box-shadow 0.2s ease;
 
-    animation: buttonAppear 1s ease;
 }
+
 
 #startButton:hover {
-    transform: translateY(-4px) scale(1.03);
+
+    transform:
+        translateY(-4px)
+        scale(1.03);
 
     box-shadow:
-        0 15px 45px
-        rgba(255,255,255,0.2);
+        0 15px 40px
+        rgba(255,255,255,0.15);
+
 }
+
 
 #startButton:active {
+
     transform: scale(0.96);
+
 }
 
 
-/* =========================
+/* =====================================
    APP
-========================= */
+===================================== */
 
 #app {
+
     display: none;
+
     min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #25253b,
+            #0b0b12 65%
+        );
+
 }
+
 
 #app.active {
+
     display: block;
+
 }
 
 
-/* =========================
+/* =====================================
    HEADER
-========================= */
+===================================== */
 
 header {
+
     height: 75px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
     padding: 0 35px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
 
     border-bottom:
         1px solid
         rgba(255,255,255,0.08);
+
 }
+
 
 .logo {
+
     font-size: 23px;
+
     font-weight: 800;
+
 }
 
-.statsBtn {
-    padding: 10px 16px;
 
-    border-radius: 10px;
+.statsButton {
 
-    border:
-        1px solid
+    border: 1px solid
         rgba(255,255,255,0.12);
 
     background:
@@ -158,15 +194,29 @@ header {
 
     color: white;
 
+    padding: 10px 16px;
+
+    border-radius: 10px;
+
     cursor: pointer;
+
 }
 
 
-/* =========================
+.statsButton:hover {
+
+    background:
+        rgba(255,255,255,0.13);
+
+}
+
+
+/* =====================================
    MAIN
-========================= */
+===================================== */
 
 main {
+
     max-width: 800px;
 
     margin: 70px auto;
@@ -174,22 +224,27 @@ main {
     padding: 20px;
 
     text-align: center;
+
 }
 
+
 .counter {
+
     color: #888;
 
     font-size: 14px;
 
     margin-bottom: 15px;
+
 }
 
 
-/* =========================
-   CARD
-========================= */
+/* =====================================
+   QUESTION CARD
+===================================== */
 
-.card {
+.questionCard {
+
     padding: 55px 45px;
 
     border-radius: 25px;
@@ -203,10 +258,13 @@ main {
 
     box-shadow:
         0 25px 80px
-        rgba(0,0,0,0.4);
+        rgba(0,0,0,0.35);
+
 }
 
+
 .category {
+
     display: inline-block;
 
     padding: 7px 13px;
@@ -219,147 +277,236 @@ main {
     color: #a995ff;
 
     font-size: 12px;
+
     font-weight: bold;
 
     letter-spacing: 1px;
 
     margin-bottom: 25px;
+
 }
 
-#question {
-    font-size: clamp(28px, 5vw, 46px);
 
-    line-height: 1.15;
+#question {
+
+    max-width: 650px;
 
     margin:
         0 auto 45px;
 
-    max-width: 650px;
+    font-size:
+        clamp(
+            28px,
+            5vw,
+            46px
+        );
+
+    line-height: 1.15;
+
 }
 
 
-/* =========================
-   BUTTONS
-========================= */
+/* =====================================
+   VOTE BUTTONS
+===================================== */
 
-.buttons {
+.voteButtons {
+
     display: flex;
+
     gap: 15px;
-    justify-content: center;
+
 }
 
-.buttons button {
+
+.vote {
+
     flex: 1;
-
-    max-width: 260px;
-
-    padding: 18px;
 
     border: none;
 
     border-radius: 14px;
 
+    padding: 18px;
+
     color: white;
 
     font-size: 16px;
+
     font-weight: bold;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
 }
+
+
+.vote:hover {
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+.vote:disabled {
+
+    opacity: 0.4;
+
+    cursor: default;
+
+    transform: none;
+
+}
+
 
 .agree {
+
     background: #20a464;
+
 }
+
+
+.agree:hover {
+
+    background: #28b971;
+
+}
+
 
 .disagree {
+
     background: #d84848;
-}
 
-.buttons button:hover:not(:disabled) {
-    transform: translateY(-3px);
-}
-
-.buttons button:disabled {
-    opacity: 0.4;
 }
 
 
-/* =========================
+.disagree:hover {
+
+    background: #ed5959;
+
+}
+
+
+/* =====================================
    RESULTS
-========================= */
+===================================== */
 
 .results {
+
     margin-top: 35px;
+
 }
+
 
 .hidden {
+
     display: none !important;
+
 }
+
 
 .resultTitle {
-    color: #aaa;
+
+    color: #999;
+
     margin-bottom: 25px;
+
 }
+
 
 .percentages {
+
     display: flex;
+
     justify-content: space-around;
-    margin-bottom: 20px;
+
 }
 
-.percentages div {
+
+.percentage {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 5px;
+
 }
 
-.percentages strong {
+
+.percentage strong {
+
     font-size: 32px;
+
 }
 
-.percentages span {
-    color: #999;
+
+.percentage span {
+
+    color: #888;
+
     font-size: 13px;
+
 }
 
-.bar {
-    height: 12px;
+
+/* RESULT BAR */
+
+.resultBar {
 
     width: 100%;
+
+    height: 12px;
+
+    margin-top: 25px;
 
     background: #d84848;
 
     border-radius: 20px;
 
     overflow: hidden;
+
 }
 
+
 #agreeBar {
-    height: 100%;
+
     width: 50%;
+
+    height: 100%;
 
     background: #20a464;
 
-    transition: width 1s ease;
+    transition:
+        width 1s ease;
+
 }
 
-#resultMessage {
+
+.resultMessage {
+
     color: #aaa;
+
+    margin-top: 20px;
+
 }
 
 
-/* =========================
-   NEXT
-========================= */
+/* =====================================
+   NEXT BUTTON
+===================================== */
 
-.next {
+.nextButton {
+
     margin-top: 25px;
 
-    padding: 15px 25px;
-
     border: none;
+
+    padding: 15px 25px;
 
     border-radius: 12px;
 
@@ -370,59 +517,85 @@ main {
     font-weight: bold;
 
     cursor: pointer;
+
+    transition: 0.2s;
+
 }
 
 
-/* =========================
+.nextButton:hover {
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+/* =====================================
    MODAL
-========================= */
+===================================== */
 
 .modal {
+
     position: fixed;
+
     inset: 0;
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     background:
         rgba(0,0,0,0.7);
 
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    z-index: 1000;
 }
 
-.modalContent {
+
+.modalBox {
+
     position: relative;
 
-    width: min(400px, 90%);
+    width:
+        min(400px, 90%);
 
     padding: 35px;
 
     border-radius: 20px;
 
     background: #191923;
+
 }
 
-.close {
+
+.closeButton {
+
     position: absolute;
 
     right: 15px;
+
     top: 15px;
 
     border: none;
 
-    background: transparent;
+    background: none;
 
     color: white;
 
     font-size: 25px;
 
     cursor: pointer;
+
 }
 
-.stat {
+
+.statRow {
+
     display: flex;
+
     justify-content: space-between;
 
     padding: 18px 0;
@@ -430,76 +603,79 @@ main {
     border-bottom:
         1px solid
         rgba(255,255,255,0.08);
-}
 
-.stat span {
-    color: #aaa;
 }
 
 
-/* =========================
+.statRow span {
+
+    color: #999;
+
+}
+
+
+/* =====================================
    FOOTER
-========================= */
+===================================== */
 
 footer {
+
     text-align: center;
 
     color: #555;
 
+    font-size: 13px;
+
     padding: 20px;
 
-    font-size: 13px;
 }
 
 
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes titleAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes buttonAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* =========================
+/* =====================================
    MOBILE
-========================= */
+===================================== */
 
 @media (max-width: 600px) {
 
     header {
+
         padding: 0 15px;
+
     }
 
-    .card {
+
+    main {
+
+        margin-top: 40px;
+
+    }
+
+
+    .questionCard {
+
         padding: 40px 20px;
+
     }
 
-    .buttons {
+
+    .voteButtons {
+
         flex-direction: column;
+
     }
 
-    .buttons button {
-        max-width: none;
+
+    .vote {
+
+        width: 100%;
+
     }
+
+
+    .startContent h1 {
+
+        letter-spacing: -2px;
+
+    }
+
 }

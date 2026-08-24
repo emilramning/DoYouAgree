@@ -9,110 +9,131 @@
 
 <body>
 
-    <header>
-        <div class="logo">Do You Agree?</div>
-
-        <button class="stats-btn" onclick="showStats()">
-            📊 My Stats
-        </button>
-    </header>
-
-    <main>
-
-        <div class="counter" id="counter">
-            Question 1
+    <!-- START SCREEN -->
+    <div id="startScreen">
+        <div class="startContent">
+            <h1>Do you agree?</h1>
+            <button onclick="startGame()">START</button>
         </div>
-
-        <div class="card">
-
-            <div class="category" id="category">
-                FOOD
-            </div>
-
-            <h1 id="question">
-                It should be illegal to put pineapple on pizza.
-            </h1>
-
-            <div class="buttons">
-
-                <button class="agree" onclick="vote('agree')">
-                    <span>👍</span>
-                    AGREE
-                </button>
-
-                <button class="disagree" onclick="vote('disagree')">
-                    <span>👎</span>
-                    DON'T AGREE
-                </button>
-
-            </div>
-
-            <div id="results" class="results hidden">
-
-                <div class="result-title">
-                    Here's what people think:
-                </div>
-
-                <div class="percentages">
-
-                    <div>
-                        <strong id="agreePercent">0%</strong>
-                        <span>Agree</span>
-                    </div>
-
-                    <div>
-                        <strong id="disagreePercent">0%</strong>
-                        <span>Don't Agree</span>
-                    </div>
-
-                </div>
-
-                <div class="bar">
-                    <div id="agreeBar"></div>
-                </div>
-
-                <p id="resultMessage"></p>
-
-            </div>
-
-        </div>
-
-        <button id="nextButton" class="next hidden" onclick="nextQuestion()">
-            Next Question →
-        </button>
-
-    </main>
-
-    <div id="statsModal" class="modal hidden">
-
-        <div class="modal-content">
-
-            <button class="close" onclick="closeStats()">×</button>
-
-            <h2>📊 Your Stats</h2>
-
-            <div class="stat">
-                <span>Questions answered</span>
-                <strong id="totalAnswered">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Agreed</span>
-                <strong id="totalAgree">0</strong>
-            </div>
-
-            <div class="stat">
-                <span>Didn't agree</span>
-                <strong id="totalDisagree">0</strong>
-            </div>
-
-        </div>
-
     </div>
 
-    <footer>
-        Made for people who have opinions.
-    </footer>
+    <!-- MAIN APP -->
+    <div id="app">
+
+        <header>
+            <div class="logo">Do You Agree?</div>
+
+            <button class="statsBtn" onclick="showStats()">
+                📊 My Stats
+            </button>
+        </header>
+
+        <main>
+
+            <div class="counter" id="counter">
+                Question 1
+            </div>
+
+            <div class="card">
+
+                <div class="category" id="category">
+                    FOOD
+                </div>
+
+                <h2 id="question">
+                    It should be illegal to put pineapple on pizza.
+                </h2>
+
+                <div class="buttons">
+
+                    <button class="agree" onclick="vote('agree')">
+                        👍 AGREE
+                    </button>
+
+                    <button class="disagree" onclick="vote('disagree')">
+                        👎 DON'T AGREE
+                    </button>
+
+                </div>
+
+                <!-- RESULTS -->
+
+                <div id="results" class="results hidden">
+
+                    <div class="resultTitle">
+                        Here's what people think:
+                    </div>
+
+                    <div class="percentages">
+
+                        <div class="percentageBox">
+                            <strong id="agreePercent">0%</strong>
+                            <span>Agree</span>
+                        </div>
+
+                        <div class="percentageBox">
+                            <strong id="disagreePercent">0%</strong>
+                            <span>Don't Agree</span>
+                        </div>
+
+                    </div>
+
+                    <div class="bar">
+                        <div id="agreeBar"></div>
+                    </div>
+
+                    <p id="resultMessage"></p>
+
+                </div>
+
+            </div>
+
+            <button
+                id="nextButton"
+                class="next hidden"
+                onclick="nextQuestion()"
+            >
+                Next Question →
+            </button>
+
+        </main>
+
+        <!-- STATS MODAL -->
+
+        <div id="statsModal" class="modal hidden">
+
+            <div class="modalContent">
+
+                <button class="close" onclick="closeStats()">
+                    ×
+                </button>
+
+                <h2>📊 Your Stats</h2>
+
+                <div class="stat">
+                    <span>Questions answered</span>
+                    <strong id="totalAnswered">0</strong>
+                </div>
+
+                <div class="stat">
+                    <span>Agreed</span>
+                    <strong id="totalAgree">0</strong>
+                </div>
+
+                <div class="stat">
+                    <span>Didn't agree</span>
+                    <strong id="totalDisagree">0</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer>
+            Made for people who have opinions.
+        </footer>
+
+    </div>
 
     <script src="script.js"></script>
 

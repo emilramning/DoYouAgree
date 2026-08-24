@@ -10,53 +10,40 @@
 <body>
 
     <!-- START SCREEN -->
-    <div id="startScreen">
+    <section id="startScreen">
         <div class="startContent">
             <h1>Do you agree?</h1>
-            <button onclick="startGame()">START</button>
+            <button id="startButton">START</button>
         </div>
-    </div>
+    </section>
 
-    <!-- MAIN APP -->
+    <!-- WEBSITE -->
     <div id="app">
 
         <header>
             <div class="logo">Do You Agree?</div>
-
-            <button class="statsBtn" onclick="showStats()">
-                📊 My Stats
-            </button>
+            <button class="statsBtn" id="statsButton">📊 My Stats</button>
         </header>
 
         <main>
 
-            <div class="counter" id="counter">
-                Question 1
-            </div>
+            <div class="counter" id="counter"></div>
 
             <div class="card">
 
-                <div class="category" id="category">
-                    FOOD
-                </div>
+                <div class="category" id="category"></div>
 
-                <h2 id="question">
-                    It should be illegal to put pineapple on pizza.
-                </h2>
+                <h2 id="question"></h2>
 
                 <div class="buttons">
-
-                    <button class="agree" onclick="vote('agree')">
+                    <button class="agree" id="agreeButton">
                         👍 AGREE
                     </button>
 
-                    <button class="disagree" onclick="vote('disagree')">
+                    <button class="disagree" id="disagreeButton">
                         👎 DON'T AGREE
                     </button>
-
                 </div>
-
-                <!-- RESULTS -->
 
                 <div id="results" class="results hidden">
 
@@ -65,17 +52,15 @@
                     </div>
 
                     <div class="percentages">
-
-                        <div class="percentageBox">
+                        <div>
                             <strong id="agreePercent">0%</strong>
                             <span>Agree</span>
                         </div>
 
-                        <div class="percentageBox">
+                        <div>
                             <strong id="disagreePercent">0%</strong>
                             <span>Don't Agree</span>
                         </div>
-
                     </div>
 
                     <div class="bar">
@@ -88,25 +73,17 @@
 
             </div>
 
-            <button
-                id="nextButton"
-                class="next hidden"
-                onclick="nextQuestion()"
-            >
+            <button id="nextButton" class="next hidden">
                 Next Question →
             </button>
 
         </main>
 
-        <!-- STATS MODAL -->
-
         <div id="statsModal" class="modal hidden">
 
             <div class="modalContent">
 
-                <button class="close" onclick="closeStats()">
-                    ×
-                </button>
+                <button class="close" id="closeStats">×</button>
 
                 <h2>📊 Your Stats</h2>
 

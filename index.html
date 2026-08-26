@@ -1,229 +1,445 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Do You Agree?</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- =========================
-         START SCREEN
-    ========================== -->
 
-    <div id="startScreen">
+<!-- =====================================
+     START SCREEN
+===================================== -->
 
-        <div class="startContent">
+<div id="startScreen">
 
-            <h1>Do you agree?</h1>
+    <div class="startContent">
 
-            <button id="startButton">
-                START
-            </button>
+        <h1>Do you agree?</h1>
 
-        </div>
+        <p>
+            Everyone has an opinion.
+        </p>
+
+        <button id="startButton">
+            START
+        </button>
 
     </div>
 
+</div>
 
-    <!-- =========================
-         MAIN WEBSITE
-    ========================== -->
 
-    <div id="app">
 
-        <!-- HEADER -->
+<!-- =====================================
+     APP
+===================================== -->
 
-        <header>
+<div id="app">
 
-            <div class="logo">
-                Do You Agree?
-            </div>
 
-            <button id="statsButton" class="statsButton">
-                📊 My Stats
+<header>
+
+    <div class="logo">
+        Do You Agree?
+    </div>
+
+
+    <div class="headerButtons">
+
+        <button
+            id="leaderboardButton"
+            class="headerButton"
+        >
+            🏆 Leaderboard
+        </button>
+
+
+        <button
+            id="loginButton"
+            class="headerButton"
+        >
+            🔐 Login
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<main>
+
+
+    <div
+        id="counter"
+        class="counter"
+    >
+        Loading...
+    </div>
+
+
+    <div class="questionCard">
+
+
+        <div
+            id="category"
+            class="category"
+        >
+            RANDOM
+        </div>
+
+
+        <h2 id="question">
+            Loading question...
+        </h2>
+
+
+        <div class="voteButtons">
+
+
+            <button
+                id="agreeButton"
+                class="vote agree"
+            >
+
+                👍
+
+                <span>
+                    AGREE
+                </span>
+
             </button>
 
-        </header>
 
+            <button
+                id="disagreeButton"
+                class="vote disagree"
+            >
 
-        <!-- MAIN -->
+                👎
 
-        <main>
+                <span>
+                    DON'T AGREE
+                </span>
 
-            <div id="counter" class="counter">
-                Question 1
-            </div>
-
-
-            <div class="questionCard">
-
-                <div id="category" class="category">
-                    FOOD
-                </div>
-
-
-                <h2 id="question">
-                    It should be illegal to put pineapple on pizza.
-                </h2>
-
-
-                <!-- VOTE BUTTONS -->
-
-                <div class="voteButtons">
-
-                    <button id="agreeButton" class="vote agree">
-                        👍
-                        <span>AGREE</span>
-                    </button>
-
-
-                    <button id="disagreeButton" class="vote disagree">
-                        👎
-                        <span>DON'T AGREE</span>
-                    </button>
-
-                </div>
-
-
-                <!-- RESULTS -->
-
-                <div id="results" class="results hidden">
-
-                    <p class="resultTitle">
-                        Here's what people think
-                    </p>
-
-
-                    <div class="percentages">
-
-                        <div class="percentage">
-
-                            <strong id="agreePercent">
-                                0%
-                            </strong>
-
-                            <span>
-                                Agree
-                            </span>
-
-                        </div>
-
-
-                        <div class="percentage">
-
-                            <strong id="disagreePercent">
-                                0%
-                            </strong>
-
-                            <span>
-                                Don't Agree
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- BAR -->
-
-                    <div class="resultBar">
-
-                        <div id="agreeBar"></div>
-
-                    </div>
-
-
-                    <p id="resultMessage" class="resultMessage"></p>
-
-                </div>
-
-            </div>
-
-
-            <!-- NEXT -->
-
-            <button id="nextButton" class="nextButton hidden">
-                Next Question →
             </button>
 
-        </main>
-
-
-        <!-- =========================
-             STATS MODAL
-        ========================== -->
-
-        <div id="statsModal" class="modal hidden">
-
-            <div class="modalBox">
-
-                <button id="closeStats" class="closeButton">
-                    ×
-                </button>
-
-
-                <h2>
-                    📊 Your Stats
-                </h2>
-
-
-                <div class="statRow">
-
-                    <span>
-                        Questions answered
-                    </span>
-
-                    <strong id="totalAnswered">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="statRow">
-
-                    <span>
-                        Agreed
-                    </span>
-
-                    <strong id="totalAgree">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="statRow">
-
-                    <span>
-                        Didn't agree
-                    </span>
-
-                    <strong id="totalDisagree">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
 
         </div>
 
 
-        <footer>
-            
-        </footer>
+
+        <!-- RESULTS -->
+
+        <div
+            id="results"
+            class="results hidden"
+        >
+
+            <p class="resultTitle">
+                Here's what everyone thinks
+            </p>
+
+
+            <div class="percentages">
+
+
+                <div class="percentage">
+
+                    <strong id="agreePercent">
+                        0%
+                    </strong>
+
+                    <span>
+                        Agree
+                    </span>
+
+                </div>
+
+
+                <div class="percentage">
+
+                    <strong id="disagreePercent">
+                        0%
+                    </strong>
+
+                    <span>
+                        Don't Agree
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="resultBar">
+
+                <div id="agreeBar"></div>
+
+            </div>
+
+
+            <p
+                id="voteCount"
+                class="voteCount"
+            >
+                0 votes
+            </p>
+
+
+            <p
+                id="resultMessage"
+                class="resultMessage"
+            ></p>
+
+
+        </div>
+
 
     </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <button
+        id="nextButton"
+        class="nextButton hidden"
+    >
+        Next Question →
+    </button>
+
+
+</main>
+
+
+
+<!-- =====================================
+     LOGIN MODAL
+===================================== -->
+
+<div
+    id="loginModal"
+    class="modal hidden"
+>
+
+    <div class="modalBox">
+
+
+        <button
+            id="closeLogin"
+            class="closeButton"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Welcome 👋
+        </h2>
+
+
+        <p class="modalDescription">
+            Log in to appear on the leaderboard.
+        </p>
+
+
+        <button
+            id="googleButton"
+            class="googleButton"
+        >
+
+            <span class="googleIcon">
+                G
+            </span>
+
+            Continue with Google
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================
+     USERNAME MODAL
+===================================== -->
+
+<div
+    id="usernameModal"
+    class="modal hidden"
+>
+
+    <div class="modalBox">
+
+        <h2>
+            Choose your username 👤
+        </h2>
+
+        <p class="modalDescription">
+            This is what people will see on the leaderboard.
+        </p>
+
+
+        <input
+            id="usernameInput"
+            type="text"
+            maxlength="20"
+            placeholder="Your username"
+        >
+
+
+        <button
+            id="usernameButton"
+            class="continueButton"
+        >
+            Continue
+        </button>
+
+
+        <p
+            id="usernameError"
+            class="error"
+        ></p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================
+     LEADERBOARD
+===================================== -->
+
+<div
+    id="leaderboardModal"
+    class="modal hidden"
+>
+
+    <div class="leaderboardBox">
+
+
+        <button
+            id="closeLeaderboard"
+            class="closeButton"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            🏆 Top 50
+        </h2>
+
+
+        <p class="modalDescription">
+            Most questions answered
+        </p>
+
+
+        <div
+            id="leaderboardList"
+            class="leaderboardList"
+        >
+            Loading...
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================
+     USER MENU
+===================================== -->
+
+<div
+    id="userModal"
+    class="modal hidden"
+>
+
+    <div class="modalBox">
+
+        <button
+            id="closeUser"
+            class="closeButton"
+        >
+            ×
+        </button>
+
+
+        <h2 id="userName">
+            User
+        </h2>
+
+
+        <div class="userStats">
+
+            <div>
+                <strong id="userQuestions">
+                    0
+                </strong>
+
+                <span>
+                    Questions answered
+                </span>
+            </div>
+
+        </div>
+
+
+        <button
+            id="logoutButton"
+            class="logoutButton"
+        >
+            Log out
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<footer>
+
+    Made for people who have opinions.
+
+</footer>
+
+
+</div>
+
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>

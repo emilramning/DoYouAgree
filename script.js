@@ -1,19 +1,13 @@
-/* =====================================
-   SUPABASE
-===================================== */
-
 const SUPABASE_URL =
     "https://dfmkomjwpgbvxjudxlhi.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_hK8jFComIB90VipkRmFGZw_djxLU8jl";
 
-
-const db =
-    supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+const db = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =====================================
@@ -21,11 +15,8 @@ const db =
 ===================================== */
 
 let questions = [];
-
 let currentQuestion = null;
-
 let user = null;
-
 let profile = null;
 
 
@@ -88,20 +79,14 @@ startButton.addEventListener(
     async () => {
 
         startScreen.style.opacity = "0";
-
-        startScreen.style.transform =
-            "scale(1.05)";
-
+        startScreen.style.transform = "scale(1.05)";
 
         setTimeout(() => {
 
-            startScreen.style.display =
-                "none";
-
+            startScreen.style.display = "none";
             app.classList.add("active");
 
         }, 600);
-
 
         await initialize();
 
@@ -123,20 +108,17 @@ async function initialize() {
 
 
 /* =====================================
-   AUTH CHECK
+   AUTH
 ===================================== */
 
 async function checkUser() {
 
     const {
         data
-    } =
-        await db.auth.getSession();
-
+    } = await db.auth.getSession();
 
     user =
         data.session?.user || null;
-
 
     updateLoginButton();
 
@@ -165,6 +147,55 @@ async function checkUser() {
 
         }
     );
+
+}
+
+
+/* =====================================
+   PROFILE
+===================================== */
+
+async function loadProfile() {
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(error);
+        return;
+
+    }
+
+
+    profile = data;
+
+
+    updateLoginButton();
+
+
+    /*
+        First time Google user
+        -> ask for username
+    */
+
+    if (!profile) {
+
+        setTimeout(() => {
+
+            askForUsername();
+
+        }, 500);
+
+    }
 
 }
 
@@ -206,41 +237,7 @@ function updateLoginButton() {
 
 
 /* =====================================
-   LOAD PROFILE
-===================================== */
-
-async function loadProfile() {
-
-    const {
-        data,
-        error
-    } =
-        await db
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .maybeSingle();
-
-
-    if (error) {
-
-        console.error(error);
-
-        return;
-
-    }
-
-
-    profile = data;
-
-
-    updateLoginButton();
-
-}
-
-
-/* =====================================
-   LOAD QUESTIONS
+   QUESTIONS
 ===================================== */
 
 async function loadQuestions() {
@@ -255,7 +252,9 @@ async function loadQuestions() {
     } =
         await db
             .from("questions")
-            .select("id, question, category");
+            .select(
+                "id, question, category"
+            );
 
 
     if (error) {
@@ -287,10 +286,6 @@ async function loadQuestions() {
 
 }
 
-
-/* =====================================
-   RANDOM QUESTION
-===================================== */
 
 function loadRandomQuestion() {
 
@@ -339,22 +334,22 @@ function loadRandomQuestion() {
 
 
 /* =====================================
-   VOTE
+   VOTING
 ===================================== */
 
 agreeButton.addEventListener(
     "click",
-    () => vote("agree")
+    () => submitVote("agree")
 );
 
 
 disagreeButton.addEventListener(
     "click",
-    () => vote("disagree")
+    () => submitVote("disagree")
 );
 
 
-async function vote(type) {
+async function submitVote(type) {
 
     if (!currentQuestion)
         return;
@@ -400,13 +395,25 @@ async function vote(type) {
     }
 
 
+    /*
+        If logged in, refresh profile
+        so leaderboard count is updated.
+    */
+
+    if (user) {
+
+        await loadProfile();
+
+    }
+
+
     await showResults(type);
 
 }
 
 
 /* =====================================
-   REAL RESULTS
+   RESULTS
 ===================================== */
 
 async function showResults(userVote) {
@@ -427,7 +434,6 @@ async function showResults(userVote) {
     if (error) {
 
         console.error(error);
-
         return;
 
     }
@@ -439,21 +445,17 @@ async function showResults(userVote) {
 
     const agrees =
         data.filter(
-            vote =>
-                vote.vote === "agree"
+            v =>
+                v.vote === "agree"
         ).length;
 
 
-    const disagrees =
-        total - agrees;
-
-
     const agreePercentage =
-        total === 0
-            ? 0
-            : Math.round(
+        total
+            ? Math.round(
                 (agrees / total) * 100
-            );
+            )
+            : 0;
 
 
     const disagreePercentage =
@@ -473,7 +475,11 @@ async function showResults(userVote) {
 
 
     voteCount.textContent =
-        `${total} ${total === 1 ? "vote" : "votes"}`;
+        `${total} ${
+            total === 1
+                ? "vote"
+                : "votes"
+        }`;
 
 
     const majority =
@@ -550,9 +556,9 @@ const googleButton =
 
 loginButton.addEventListener(
     "click",
-    async () => {
+    () => {
 
-        if (user) {
+        if (user && profile) {
 
             openUserModal();
 
@@ -640,106 +646,171 @@ const usernameError =
     );
 
 
-async function askForUsername() {
+function askForUsername() {
 
     usernameModal.classList.remove(
         "hidden"
     );
+
+    setTimeout(() => {
+
+        usernameInput.focus();
+
+    }, 100);
 
 }
 
 
 usernameButton.addEventListener(
     "click",
-    async () => {
-
-        const username =
-            usernameInput.value.trim();
+    createUsername
+);
 
 
-        if (
-            username.length < 3
-        ) {
-
-            usernameError.textContent =
-                "Username must be at least 3 characters.";
-
-            return;
-
-        }
-
+usernameInput.addEventListener(
+    "keydown",
+    event => {
 
         if (
-            !/^[a-zA-Z0-9_]+$/.test(
-                username
-            )
+            event.key === "Enter"
         ) {
 
-            usernameError.textContent =
-                "Use only letters, numbers and _.";
-
-            return;
+            createUsername();
 
         }
-
-
-        const {
-            data,
-            error
-        } =
-            await db
-                .from("profiles")
-                .insert({
-
-                    id: user.id,
-
-                    username:
-
-                        username
-
-                })
-                .select()
-                .single();
-
-
-        if (error) {
-
-            console.error(error);
-
-            if (
-                error.code ===
-                "23505"
-            ) {
-
-                usernameError.textContent =
-                    "That username is already taken.";
-
-            }
-
-            else {
-
-                usernameError.textContent =
-                    "Something went wrong.";
-
-            }
-
-            return;
-
-        }
-
-
-        profile = data;
-
-
-        usernameModal.classList.add(
-            "hidden"
-        );
-
-
-        updateLoginButton();
 
     }
 );
+
+
+async function createUsername() {
+
+    const username =
+        usernameInput.value.trim();
+
+
+    usernameError.textContent =
+        "";
+
+
+    if (
+        username.length < 3
+    ) {
+
+        usernameError.textContent =
+            "At least 3 characters 😭";
+
+        return;
+
+    }
+
+
+    if (
+        username.length > 20
+    ) {
+
+        usernameError.textContent =
+            "Maximum 20 characters.";
+
+        return;
+
+    }
+
+
+    if (
+        !/^[a-zA-Z0-9_]+$/.test(
+            username
+        )
+    ) {
+
+        usernameError.textContent =
+            "Only letters, numbers and _.";
+
+        return;
+
+    }
+
+
+    usernameButton.disabled = true;
+
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .insert({
+
+                id: user.id,
+
+                username:
+                    username
+
+            })
+            .select()
+            .single();
+
+
+    usernameButton.disabled = false;
+
+
+    if (error) {
+
+        console.error(error);
+
+
+        if (
+            error.code ===
+            "23505"
+        ) {
+
+            usernameError.textContent =
+                "That username is already taken 😭";
+
+        }
+
+        else {
+
+            usernameError.textContent =
+                "Something went wrong.";
+
+        }
+
+        return;
+
+    }
+
+
+    profile = data;
+
+
+    usernameInput.value = "";
+
+
+    usernameModal.classList.add(
+        "hidden"
+    );
+
+
+    updateLoginButton();
+
+
+    /*
+        Refresh leaderboard if open
+    */
+
+    if (
+        !leaderboardModal.classList.contains(
+            "hidden"
+        )
+    ) {
+
+        await loadLeaderboard();
+
+    }
+
+}
 
 
 /* =====================================
@@ -777,7 +848,6 @@ leaderboardButton.addEventListener(
         leaderboardModal.classList.remove(
             "hidden"
         );
-
 
         await loadLeaderboard();
 
@@ -859,24 +929,24 @@ async function loadLeaderboard() {
                 "leaderboardItem";
 
 
-            let medal =
-                `${index + 1}`;
+            let rank =
+                index + 1;
 
 
             if (index === 0)
-                medal = "🥇";
+                rank = "🥇";
 
             if (index === 1)
-                medal = "🥈";
+                rank = "🥈";
 
             if (index === 2)
-                medal = "🥉";
+                rank = "🥉";
 
 
             item.innerHTML = `
 
                 <span class="rank">
-                    ${medal}
+                    ${rank}
                 </span>
 
                 <span class="player">
@@ -903,7 +973,7 @@ async function loadLeaderboard() {
 
 
 /* =====================================
-   USER MODAL
+   USER
 ===================================== */
 
 const userModal =

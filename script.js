@@ -1,3 +1,7 @@
+/* =====================================
+   SUPABASE
+===================================== */
+
 const SUPABASE_URL =
     "https://dfmkomjwpgbvxjudxlhi.supabase.co";
 
@@ -5,34 +9,24 @@ const SUPABASE_KEY =
     "sb_publishable_hK8jFComIB90VipkRmFGZw_djxLU8jl";
 
 
-/* =====================================
-   SUPABASE
-===================================== */
-
-const { createClient } = supabase;
-
-const db = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+const db =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =====================================
-   VARIABLES
+   STATE
 ===================================== */
 
 let questions = [];
 
 let currentQuestion = null;
 
-let totalAnswered =
-    Number(localStorage.getItem("totalAnswered")) || 0;
+let user = null;
 
-let totalAgree =
-    Number(localStorage.getItem("totalAgree")) || 0;
-
-let totalDisagree =
-    Number(localStorage.getItem("totalDisagree")) || 0;
+let profile = null;
 
 
 /* =====================================
@@ -78,6 +72,9 @@ const disagreePercent =
 const agreeBar =
     document.getElementById("agreeBar");
 
+const voteCount =
+    document.getElementById("voteCount");
+
 const resultMessage =
     document.getElementById("resultMessage");
 
@@ -88,68 +85,205 @@ const resultMessage =
 
 startButton.addEventListener(
     "click",
-    async function () {
+    async () => {
 
         startScreen.style.opacity = "0";
-        startScreen.style.transform = "scale(1.05)";
+
+        startScreen.style.transform =
+            "scale(1.05)";
+
 
         setTimeout(() => {
 
-            startScreen.style.display = "none";
+            startScreen.style.display =
+                "none";
 
             app.classList.add("active");
 
         }, 600);
 
-        await loadQuestions();
+
+        await initialize();
 
     }
 );
 
 
 /* =====================================
-   LOAD QUESTIONS FROM SUPABASE
+   INITIALIZE
+===================================== */
+
+async function initialize() {
+
+    await checkUser();
+
+    await loadQuestions();
+
+}
+
+
+/* =====================================
+   AUTH CHECK
+===================================== */
+
+async function checkUser() {
+
+    const {
+        data
+    } =
+        await db.auth.getSession();
+
+
+    user =
+        data.session?.user || null;
+
+
+    updateLoginButton();
+
+
+    if (user) {
+
+        await loadProfile();
+
+    }
+
+
+    db.auth.onAuthStateChange(
+        async (_event, session) => {
+
+            user =
+                session?.user || null;
+
+            updateLoginButton();
+
+
+            if (user) {
+
+                await loadProfile();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================
+   LOGIN BUTTON
+===================================== */
+
+function updateLoginButton() {
+
+    const button =
+        document.getElementById(
+            "loginButton"
+        );
+
+
+    if (user && profile) {
+
+        button.textContent =
+            `👤 ${profile.username}`;
+
+    }
+
+    else if (user) {
+
+        button.textContent =
+            "👤 Account";
+
+    }
+
+    else {
+
+        button.textContent =
+            "🔐 Login";
+
+    }
+
+}
+
+
+/* =====================================
+   LOAD PROFILE
+===================================== */
+
+async function loadProfile() {
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle();
+
+
+    if (error) {
+
+        console.error(error);
+
+        return;
+
+    }
+
+
+    profile = data;
+
+
+    updateLoginButton();
+
+}
+
+
+/* =====================================
+   LOAD QUESTIONS
 ===================================== */
 
 async function loadQuestions() {
 
-    counter.textContent = "Loading questions...";
+    counter.textContent =
+        "Loading questions...";
 
-    try {
 
-        const { data, error } =
-            await db
-                .from("questions")
-                .select("*");
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("questions")
+            .select("id, question, category");
 
-        if (error) {
-            throw error;
-        }
 
-        questions = data;
-
-        if (!questions.length) {
-
-            counter.textContent =
-                "No questions found.";
-
-            return;
-
-        }
-
-        loadRandomQuestion();
-
-    } catch (error) {
+    if (error) {
 
         console.error(error);
 
-        counter.textContent =
+        question.textContent =
             "Couldn't load questions 😭";
 
-        question.textContent =
-            "Something went wrong connecting to the database.";
+        return;
 
     }
+
+
+    questions = data;
+
+
+    if (!questions.length) {
+
+        question.textContent =
+            "No questions found.";
+
+        return;
+
+    }
+
+
+    loadRandomQuestion();
 
 }
 
@@ -160,17 +294,19 @@ async function loadQuestions() {
 
 function loadRandomQuestion() {
 
-    if (!questions.length) return;
+    if (!questions.length)
+        return;
 
 
-    const randomIndex =
+    const random =
         Math.floor(
-            Math.random() * questions.length
+            Math.random() *
+            questions.length
         );
 
 
     currentQuestion =
-        questions[randomIndex];
+        questions[random];
 
 
     question.textContent =
@@ -185,17 +321,19 @@ function loadRandomQuestion() {
         "What do you think?";
 
 
-    /* Reset */
+    results.classList.add(
+        "hidden"
+    );
 
-    results.classList.add("hidden");
 
-    nextButton.classList.add("hidden");
+    nextButton.classList.add(
+        "hidden"
+    );
+
 
     agreeButton.disabled = false;
 
     disagreeButton.disabled = false;
-
-    agreeBar.style.width = "50%";
 
 }
 
@@ -206,73 +344,43 @@ function loadRandomQuestion() {
 
 agreeButton.addEventListener(
     "click",
-    () => submitVote("agree")
+    () => vote("agree")
 );
 
 
 disagreeButton.addEventListener(
     "click",
-    () => submitVote("disagree")
+    () => vote("disagree")
 );
 
 
-async function submitVote(vote) {
+async function vote(type) {
 
-    if (!currentQuestion) return;
+    if (!currentQuestion)
+        return;
 
-
-    /* Prevent double clicking */
 
     agreeButton.disabled = true;
 
     disagreeButton.disabled = true;
 
 
-    try {
+    const {
+        error
+    } =
+        await db.rpc(
+            "submit_vote",
+            {
+                p_question_id:
+                    currentQuestion.id,
 
-        const { error } =
-            await db.rpc(
-                "submit_vote",
-                {
-                    p_question_id:
-                        currentQuestion.id,
-
-                    p_vote:
-                        vote
-                }
-            );
-
-
-        if (error) {
-            throw error;
-        }
+                p_vote:
+                    type
+            }
+        );
 
 
-        /* Save local stats */
-
-        totalAnswered++;
-
-
-        if (vote === "agree") {
-
-            totalAgree++;
-
-        } else {
-
-            totalDisagree++;
-
-        }
-
-
-        saveStats();
-
-
-        /* Get REAL percentages */
-
-        await showRealResults(vote);
-
-
-    } catch (error) {
+    if (error) {
 
         console.error(error);
 
@@ -287,18 +395,26 @@ async function submitVote(vote) {
 
         disagreeButton.disabled = false;
 
+        return;
+
     }
+
+
+    await showResults(type);
 
 }
 
 
 /* =====================================
-   GET REAL RESULTS
+   REAL RESULTS
 ===================================== */
 
-async function showRealResults(userVote) {
+async function showResults(userVote) {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await db
             .from("votes")
             .select("vote")
@@ -310,7 +426,9 @@ async function showRealResults(userVote) {
 
     if (error) {
 
-        throw error;
+        console.error(error);
+
+        return;
 
     }
 
@@ -319,65 +437,60 @@ async function showRealResults(userVote) {
         data.length;
 
 
-    if (total === 0) return;
-
-
-    const agreeVotes =
+    const agrees =
         data.filter(
-            v => v.vote === "agree"
+            vote =>
+                vote.vote === "agree"
         ).length;
 
 
-    const disagreeVotes =
-        total - agreeVotes;
+    const disagrees =
+        total - agrees;
 
 
     const agreePercentage =
-        Math.round(
-            (agreeVotes / total) * 100
-        );
+        total === 0
+            ? 0
+            : Math.round(
+                (agrees / total) * 100
+            );
 
 
     const disagreePercentage =
         100 - agreePercentage;
 
 
-    /* Display */
-
     agreePercent.textContent =
-        agreePercentage + "%";
+        `${agreePercentage}%`;
 
 
     disagreePercent.textContent =
-        disagreePercentage + "%";
+        `${disagreePercentage}%`;
 
 
-    setTimeout(() => {
-
-        agreeBar.style.width =
-            agreePercentage + "%";
-
-    }, 50);
+    agreeBar.style.width =
+        `${agreePercentage}%`;
 
 
-    /* Message */
+    voteCount.textContent =
+        `${total} ${total === 1 ? "vote" : "votes"}`;
 
-    const majorityAgrees =
+
+    const majority =
         agreePercentage >= 50;
 
 
-    const userAgrees =
-        userVote === "agree";
-
-
     if (
-        userAgrees === majorityAgrees
+        (userVote === "agree") ===
+        majority
     ) {
 
         resultMessage.textContent =
             "You're with the majority! 😎";
 
-    } else {
+    }
+
+    else {
 
         resultMessage.textContent =
             "You're in the minority. Bold move. 😭";
@@ -398,7 +511,7 @@ async function showRealResults(userVote) {
 
 
 /* =====================================
-   NEXT QUESTION
+   NEXT
 ===================================== */
 
 nextButton.addEventListener(
@@ -408,66 +521,439 @@ nextButton.addEventListener(
 
 
 /* =====================================
-   LOCAL STATS
+   GOOGLE LOGIN
 ===================================== */
 
-function saveStats() {
-
-    localStorage.setItem(
-        "totalAnswered",
-        totalAnswered
+const loginButton =
+    document.getElementById(
+        "loginButton"
     );
 
-    localStorage.setItem(
-        "totalAgree",
-        totalAgree
+
+const loginModal =
+    document.getElementById(
+        "loginModal"
     );
 
-    localStorage.setItem(
-        "totalDisagree",
-        totalDisagree
+
+const closeLogin =
+    document.getElementById(
+        "closeLogin"
+    );
+
+
+const googleButton =
+    document.getElementById(
+        "googleButton"
+    );
+
+
+loginButton.addEventListener(
+    "click",
+    async () => {
+
+        if (user) {
+
+            openUserModal();
+
+        }
+
+        else {
+
+            loginModal.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+
+closeLogin.addEventListener(
+    "click",
+    () => {
+
+        loginModal.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+googleButton.addEventListener(
+    "click",
+    async () => {
+
+        const {
+            error
+        } =
+            await db.auth.signInWithOAuth({
+                provider: "google",
+
+                options: {
+
+                    redirectTo:
+                        "https://emilramning.github.io/DoYouAgree/"
+
+                }
+
+            });
+
+
+        if (error) {
+
+            console.error(error);
+
+        }
+
+    }
+);
+
+
+/* =====================================
+   USERNAME
+===================================== */
+
+const usernameModal =
+    document.getElementById(
+        "usernameModal"
+    );
+
+
+const usernameInput =
+    document.getElementById(
+        "usernameInput"
+    );
+
+
+const usernameButton =
+    document.getElementById(
+        "usernameButton"
+    );
+
+
+const usernameError =
+    document.getElementById(
+        "usernameError"
+    );
+
+
+async function askForUsername() {
+
+    usernameModal.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+usernameButton.addEventListener(
+    "click",
+    async () => {
+
+        const username =
+            usernameInput.value.trim();
+
+
+        if (
+            username.length < 3
+        ) {
+
+            usernameError.textContent =
+                "Username must be at least 3 characters.";
+
+            return;
+
+        }
+
+
+        if (
+            !/^[a-zA-Z0-9_]+$/.test(
+                username
+            )
+        ) {
+
+            usernameError.textContent =
+                "Use only letters, numbers and _.";
+
+            return;
+
+        }
+
+
+        const {
+            data,
+            error
+        } =
+            await db
+                .from("profiles")
+                .insert({
+
+                    id: user.id,
+
+                    username:
+
+                        username
+
+                })
+                .select()
+                .single();
+
+
+        if (error) {
+
+            console.error(error);
+
+            if (
+                error.code ===
+                "23505"
+            ) {
+
+                usernameError.textContent =
+                    "That username is already taken.";
+
+            }
+
+            else {
+
+                usernameError.textContent =
+                    "Something went wrong.";
+
+            }
+
+            return;
+
+        }
+
+
+        profile = data;
+
+
+        usernameModal.classList.add(
+            "hidden"
+        );
+
+
+        updateLoginButton();
+
+    }
+);
+
+
+/* =====================================
+   LEADERBOARD
+===================================== */
+
+const leaderboardButton =
+    document.getElementById(
+        "leaderboardButton"
+    );
+
+
+const leaderboardModal =
+    document.getElementById(
+        "leaderboardModal"
+    );
+
+
+const closeLeaderboard =
+    document.getElementById(
+        "closeLeaderboard"
+    );
+
+
+const leaderboardList =
+    document.getElementById(
+        "leaderboardList"
+    );
+
+
+leaderboardButton.addEventListener(
+    "click",
+    async () => {
+
+        leaderboardModal.classList.remove(
+            "hidden"
+        );
+
+
+        await loadLeaderboard();
+
+    }
+);
+
+
+closeLeaderboard.addEventListener(
+    "click",
+    () => {
+
+        leaderboardModal.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+
+async function loadLeaderboard() {
+
+    leaderboardList.textContent =
+        "Loading...";
+
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .select(
+                "username, questions_answered"
+            )
+            .order(
+                "questions_answered",
+                {
+                    ascending: false
+                }
+            )
+            .limit(50);
+
+
+    if (error) {
+
+        console.error(error);
+
+        leaderboardList.textContent =
+            "Couldn't load leaderboard.";
+
+        return;
+
+    }
+
+
+    leaderboardList.innerHTML = "";
+
+
+    if (!data.length) {
+
+        leaderboardList.textContent =
+            "No players yet. Be the first! 👀";
+
+        return;
+
+    }
+
+
+    data.forEach(
+        (player, index) => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "leaderboardItem";
+
+
+            let medal =
+                `${index + 1}`;
+
+
+            if (index === 0)
+                medal = "🥇";
+
+            if (index === 1)
+                medal = "🥈";
+
+            if (index === 2)
+                medal = "🥉";
+
+
+            item.innerHTML = `
+
+                <span class="rank">
+                    ${medal}
+                </span>
+
+                <span class="player">
+                    ${escapeHtml(
+                        player.username
+                    )}
+                </span>
+
+                <span class="score">
+                    ${player.questions_answered}
+                </span>
+
+            `;
+
+
+            leaderboardList.appendChild(
+                item
+            );
+
+        }
     );
 
 }
 
 
 /* =====================================
-   STATS MODAL
+   USER MODAL
 ===================================== */
 
-const statsButton =
-    document.getElementById("statsButton");
-
-const statsModal =
-    document.getElementById("statsModal");
-
-const closeStats =
-    document.getElementById("closeStats");
+const userModal =
+    document.getElementById(
+        "userModal"
+    );
 
 
-statsButton.addEventListener(
+const closeUser =
+    document.getElementById(
+        "closeUser"
+    );
+
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+
+function openUserModal() {
+
+    if (!profile)
+        return;
+
+
+    document.getElementById(
+        "userName"
+    ).textContent =
+        profile.username;
+
+
+    document.getElementById(
+        "userQuestions"
+    ).textContent =
+        profile.questions_answered;
+
+
+    userModal.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+closeUser.addEventListener(
     "click",
-    function () {
+    () => {
 
-        document.getElementById(
-            "totalAnswered"
-        ).textContent =
-            totalAnswered;
-
-
-        document.getElementById(
-            "totalAgree"
-        ).textContent =
-            totalAgree;
-
-
-        document.getElementById(
-            "totalDisagree"
-        ).textContent =
-            totalDisagree;
-
-
-        statsModal.classList.remove(
+        userModal.classList.add(
             "hidden"
         );
 
@@ -475,13 +961,41 @@ statsButton.addEventListener(
 );
 
 
-closeStats.addEventListener(
+logoutButton.addEventListener(
     "click",
-    function () {
+    async () => {
 
-        statsModal.classList.add(
+        await db.auth.signOut();
+
+        user = null;
+
+        profile = null;
+
+
+        userModal.classList.add(
             "hidden"
         );
 
+
+        updateLoginButton();
+
     }
 );
+
+
+/* =====================================
+   ESCAPE HTML
+===================================== */
+
+function escapeHtml(text) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+}

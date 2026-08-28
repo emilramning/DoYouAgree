@@ -23,7 +23,7 @@ body {
 
 
 /* =====================================
-   START
+   START SCREEN
 ===================================== */
 
 #startScreen {
@@ -313,7 +313,7 @@ main {
 
 
 /* =====================================
-   VOTES
+   VOTE BUTTONS
 ===================================== */
 
 .voteButtons {
@@ -389,6 +389,9 @@ main {
 
     margin-top: 35px;
 
+    animation:
+        resultsAppear .5s ease;
+
 }
 
 
@@ -399,85 +402,223 @@ main {
 }
 
 
+@keyframes resultsAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
 .resultTitle {
 
     color: #888;
 
-}
-
-
-.percentages {
-
-    display: flex;
-
-    justify-content: space-around;
-
-    margin-top: 20px;
+    margin-bottom: 25px;
 
 }
 
 
-.percentage {
+/* =====================================
+   DONUT CHART
+===================================== */
 
-    display: flex;
+.resultRing {
 
-    flex-direction: column;
+    position: relative;
 
-    gap: 5px;
+    width: 260px;
 
-}
+    height: 260px;
 
-
-.percentage strong {
-
-    font-size: 32px;
-
-}
-
-
-.percentage span {
-
-    color: #888;
-
-    font-size: 13px;
+    margin:
+        0 auto 25px;
 
 }
 
 
-.resultBar {
+.ringSvg {
 
-    height: 12px;
-
-    margin-top: 25px;
-
-    background: #d84848;
-
-    border-radius: 20px;
-
-    overflow: hidden;
-
-}
-
-
-#agreeBar {
+    width: 100%;
 
     height: 100%;
 
-    width: 50%;
-
-    background: #20a464;
-
-    transition:
-        width 1s ease;
+    transform:
+        rotate(-90deg);
 
 }
 
+
+.ringBackground {
+
+    fill: none;
+
+    stroke:
+        rgba(255,255,255,.08);
+
+    stroke-width: 18;
+
+}
+
+
+.ringAgree {
+
+    fill: none;
+
+    stroke: #20a464;
+
+    stroke-width: 18;
+
+    stroke-linecap: round;
+
+    /*
+       Circumference of
+       radius 78 ≈ 490
+    */
+
+    stroke-dasharray: 490;
+
+    stroke-dashoffset: 490;
+
+}
+
+
+.ringCenter {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    pointer-events: none;
+
+}
+
+
+.ringCenter strong {
+
+    font-size: 48px;
+
+    font-weight: 800;
+
+    letter-spacing: -2px;
+
+}
+
+
+.ringCenter span {
+
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #777;
+
+}
+
+
+/* =====================================
+   PERCENTAGE BREAKDOWN
+===================================== */
+
+.percentageBreakdown {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 30px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.resultOption {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 14px;
+
+}
+
+
+.resultOption strong {
+
+    margin-left: 3px;
+
+}
+
+
+.resultDot {
+
+    width: 9px;
+
+    height: 9px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+
+}
+
+
+.agreeDot {
+
+    background: #20a464;
+
+}
+
+
+.disagreeDot {
+
+    background: #d84848;
+
+}
+
+
+/* =====================================
+   VOTE COUNT
+===================================== */
 
 .voteCount {
 
     color: #777;
 
     font-size: 13px;
+
+    margin:
+        12px 0 8px;
 
 }
 
@@ -486,11 +627,14 @@ main {
 
     color: #aaa;
 
+    margin:
+        10px 0;
+
 }
 
 
 /* =====================================
-   NEXT
+   NEXT BUTTON
 ===================================== */
 
 .nextButton {
@@ -511,6 +655,16 @@ main {
     font-weight: bold;
 
     cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.nextButton:hover {
+
+    transform:
+        translateY(-2px);
 
 }
 
@@ -579,6 +733,7 @@ main {
     position: absolute;
 
     right: 15px;
+
     top: 12px;
 
     border: none;
@@ -656,7 +811,8 @@ main {
 
     padding: 14px;
 
-    border: 1px solid #333;
+    border:
+        1px solid #333;
 
     border-radius: 10px;
 
@@ -853,11 +1009,13 @@ footer {
 
     }
 
+
     .logo {
 
         font-size: 18px;
 
     }
+
 
     .headerButton {
 
@@ -868,11 +1026,13 @@ footer {
 
     }
 
+
     main {
 
         margin-top: 35px;
 
     }
+
 
     .questionCard {
 
@@ -881,9 +1041,30 @@ footer {
 
     }
 
+
     .voteButtons {
 
         flex-direction: column;
+
+    }
+
+
+    .resultRing {
+
+        width: 220px;
+
+        height: 220px;
+
+    }
+
+
+    .percentageBreakdown {
+
+        gap: 15px;
+
+        flex-direction: column;
+
+        align-items: center;
 
     }
 

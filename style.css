@@ -18,7 +18,6 @@ body {
     background: #0b0b12;
 
     color: white;
-
 }
 
 
@@ -54,7 +53,6 @@ body {
     transition:
         opacity .6s ease,
         transform .6s ease;
-
 }
 
 
@@ -70,7 +68,6 @@ body {
         );
 
     letter-spacing: -4px;
-
 }
 
 
@@ -80,7 +77,6 @@ body {
 
     margin:
         15px 0 35px;
-
 }
 
 
@@ -104,7 +100,6 @@ body {
     cursor: pointer;
 
     transition: .2s;
-
 }
 
 
@@ -113,7 +108,6 @@ body {
     transform:
         translateY(-4px)
         scale(1.03);
-
 }
 
 
@@ -133,14 +127,12 @@ body {
             #24243a,
             #0b0b12 70%
         );
-
 }
 
 
 #app.active {
 
     display: block;
-
 }
 
 
@@ -164,7 +156,6 @@ header {
     border-bottom:
         1px solid
         rgba(255,255,255,.08);
-
 }
 
 
@@ -173,7 +164,6 @@ header {
     font-size: 22px;
 
     font-weight: 800;
-
 }
 
 
@@ -182,7 +172,6 @@ header {
     display: flex;
 
     gap: 10px;
-
 }
 
 
@@ -204,6 +193,7 @@ header {
 
     cursor: pointer;
 
+    transition: .2s;
 }
 
 
@@ -212,6 +202,7 @@ header {
     background:
         rgba(255,255,255,.12);
 
+    transform: translateY(-1px);
 }
 
 
@@ -230,7 +221,6 @@ main {
         20px;
 
     text-align: center;
-
 }
 
 
@@ -241,7 +231,6 @@ main {
     font-size: 14px;
 
     margin-bottom: 15px;
-
 }
 
 
@@ -266,7 +255,6 @@ main {
     box-shadow:
         0 25px 80px
         rgba(0,0,0,.3);
-
 }
 
 
@@ -291,7 +279,6 @@ main {
     letter-spacing: 1px;
 
     margin-bottom: 25px;
-
 }
 
 
@@ -308,7 +295,6 @@ main {
 
     margin:
         0 auto 45px;
-
 }
 
 
@@ -321,7 +307,6 @@ main {
     display: flex;
 
     gap: 15px;
-
 }
 
 
@@ -343,8 +328,9 @@ main {
 
     cursor: pointer;
 
-    transition: .2s;
-
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
 }
 
 
@@ -352,7 +338,6 @@ main {
 
     transform:
         translateY(-3px);
-
 }
 
 
@@ -363,21 +348,18 @@ main {
     transform: none;
 
     cursor: default;
-
 }
 
 
 .agree {
 
     background: #20a464;
-
 }
 
 
 .disagree {
 
     background: #d84848;
-
 }
 
 
@@ -390,26 +372,19 @@ main {
     margin-top: 35px;
 
     animation:
-        resultsAppear .5s ease;
-
+        resultAppear .6s ease;
 }
 
 
-.hidden {
-
-    display: none !important;
-
-}
-
-
-@keyframes resultsAppear {
+@keyframes resultAppear {
 
     from {
 
         opacity: 0;
 
         transform:
-            translateY(15px);
+            translateY(15px)
+            scale(.97);
 
     }
 
@@ -418,10 +393,17 @@ main {
         opacity: 1;
 
         transform:
-            translateY(0);
+            translateY(0)
+            scale(1);
 
     }
 
+}
+
+
+.hidden {
+
+    display: none !important;
 }
 
 
@@ -429,80 +411,116 @@ main {
 
     color: #888;
 
-    margin-bottom: 25px;
-
+    margin-bottom: 30px;
 }
 
 
 /* =====================================
-   DONUT CHART
+   DONUT RESULT
 ===================================== */
 
-.resultRing {
+.donutResult {
 
-    position: relative;
+    display: grid;
 
-    width: 260px;
+    grid-template-columns:
+        1fr
+        180px
+        1fr;
 
-    height: 260px;
+    align-items: center;
+
+    gap: 25px;
+
+    max-width: 600px;
 
     margin:
-        0 auto 25px;
+        0 auto;
+}
+
+
+/* =====================================
+   SIDE PERCENTAGES
+===================================== */
+
+.sidePercentage {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.sidePercentage strong {
+
+    font-size: 34px;
+
+    line-height: 1;
 
 }
 
 
-.ringSvg {
+.sidePercentage span {
 
-    width: 100%;
+    color: #888;
 
-    height: 100%;
-
-    transform:
-        rotate(-90deg);
+    font-size: 13px;
 
 }
 
 
-.ringBackground {
+.leftPercentage {
 
-    fill: none;
-
-    stroke:
-        rgba(255,255,255,.08);
-
-    stroke-width: 18;
-
+    text-align: right;
 }
 
 
-.ringAgree {
+.rightPercentage {
 
-    fill: none;
+    text-align: left;
+}
 
-    stroke: #20a464;
 
-    stroke-width: 18;
+/* =====================================
+   DONUT
+===================================== */
 
-    stroke-linecap: round;
+.donutWrapper {
+
+    width: 180px;
+
+    height: 180px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.donut {
+
+    width: 180px;
+
+    height: 180px;
+
+    border-radius: 50%;
 
     /*
-       Circumference of
-       radius 78 ≈ 490
+       The JS changes this dynamically.
     */
 
-    stroke-dasharray: 490;
-
-    stroke-dashoffset: 490;
-
-}
-
-
-.ringCenter {
-
-    position: absolute;
-
-    inset: 0;
+    background:
+        conic-gradient(
+            from 0deg,
+            #20a464 0deg,
+            #20a464 180deg,
+            #d84848 180deg,
+            #d84848 360deg
+        );
 
     display: flex;
 
@@ -510,100 +528,71 @@ main {
 
     justify-content: center;
 
+    position: relative;
+
+    transform: rotate(0deg);
+
+    transition:
+        background 1.2s
+        cubic-bezier(.22,1,.36,1);
+
+    box-shadow:
+        0 0 45px
+        rgba(255,255,255,.06);
+}
+
+
+/* EMPTY CENTER */
+
+.donut::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 125px;
+
+    height: 125px;
+
+    border-radius: 50%;
+
+    background: #191923;
+
+}
+
+
+.donutCenter {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
     flex-direction: column;
 
-    pointer-events: none;
+    align-items: center;
 
+    justify-content: center;
 }
 
 
-.ringCenter strong {
+.donutCenter span {
 
-    font-size: 48px;
+    font-size: 10px;
 
-    font-weight: 800;
-
-    letter-spacing: -2px;
-
-}
-
-
-.ringCenter span {
-
-    margin-top: 3px;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 
     color: #777;
 
 }
 
 
-/* =====================================
-   PERCENTAGE BREAKDOWN
-===================================== */
+.donutCenter strong {
 
-.percentageBreakdown {
+    font-size: 28px;
 
-    display: flex;
-
-    justify-content: center;
-
-    gap: 30px;
-
-    margin-bottom: 15px;
-
-}
-
-
-.resultOption {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    font-size: 14px;
-
-}
-
-
-.resultOption strong {
-
-    margin-left: 3px;
-
-}
-
-
-.resultDot {
-
-    width: 9px;
-
-    height: 9px;
-
-    border-radius: 50%;
-
-    display: inline-block;
-
-}
-
-
-.agreeDot {
-
-    background: #20a464;
-
-}
-
-
-.disagreeDot {
-
-    background: #d84848;
-
+    margin-top: 3px;
 }
 
 
@@ -617,9 +606,7 @@ main {
 
     font-size: 13px;
 
-    margin:
-        12px 0 8px;
-
+    margin-top: 25px;
 }
 
 
@@ -627,14 +614,12 @@ main {
 
     color: #aaa;
 
-    margin:
-        10px 0;
-
+    min-height: 20px;
 }
 
 
 /* =====================================
-   NEXT BUTTON
+   NEXT
 ===================================== */
 
 .nextButton {
@@ -657,15 +642,14 @@ main {
     cursor: pointer;
 
     transition: .2s;
-
 }
 
 
 .nextButton:hover {
 
     transform:
-        translateY(-2px);
-
+        translateY(-2px)
+        scale(1.02);
 }
 
 
@@ -691,7 +675,6 @@ main {
     z-index: 10000;
 
     padding: 20px;
-
 }
 
 
@@ -716,7 +699,6 @@ main {
     border:
         1px solid
         rgba(255,255,255,.1);
-
 }
 
 
@@ -724,7 +706,6 @@ main {
 
     width:
         min(550px, 100%);
-
 }
 
 
@@ -745,14 +726,12 @@ main {
     font-size: 28px;
 
     cursor: pointer;
-
 }
 
 
 .closeButton:hover {
 
     color: white;
-
 }
 
 
@@ -761,7 +740,6 @@ main {
     color: #888;
 
     margin-bottom: 25px;
-
 }
 
 
@@ -788,7 +766,6 @@ main {
     font-size: 15px;
 
     cursor: pointer;
-
 }
 
 
@@ -797,7 +774,6 @@ main {
     margin-right: 8px;
 
     font-weight: 900;
-
 }
 
 
@@ -825,7 +801,6 @@ main {
     font-size: 16px;
 
     margin-bottom: 12px;
-
 }
 
 
@@ -846,7 +821,6 @@ main {
     font-weight: bold;
 
     cursor: pointer;
-
 }
 
 
@@ -855,7 +829,6 @@ main {
     color: #ff6464;
 
     font-size: 13px;
-
 }
 
 
@@ -870,7 +843,6 @@ main {
     flex-direction: column;
 
     gap: 8px;
-
 }
 
 
@@ -889,7 +861,6 @@ main {
 
     background:
         rgba(255,255,255,.05);
-
 }
 
 
@@ -898,7 +869,6 @@ main {
     width: 40px;
 
     color: #888;
-
 }
 
 
@@ -909,14 +879,12 @@ main {
     text-align: left;
 
     font-weight: bold;
-
 }
 
 
 .score {
 
     color: #aaa;
-
 }
 
 
@@ -937,7 +905,6 @@ main {
 
     margin:
         20px 0;
-
 }
 
 
@@ -946,7 +913,6 @@ main {
     display: block;
 
     font-size: 40px;
-
 }
 
 
@@ -955,7 +921,6 @@ main {
     color: #888;
 
     font-size: 13px;
-
 }
 
 
@@ -976,7 +941,6 @@ main {
     font-weight: bold;
 
     cursor: pointer;
-
 }
 
 
@@ -993,7 +957,6 @@ footer {
     padding: 20px;
 
     font-size: 13px;
-
 }
 
 
@@ -1049,22 +1012,41 @@ footer {
     }
 
 
-    .resultRing {
+    .donutResult {
 
-        width: 220px;
+        grid-template-columns:
+            1fr
+            180px
+            1fr;
 
-        height: 220px;
+        gap: 15px;
 
     }
 
 
-    .percentageBreakdown {
+    .leftPercentage {
 
-        gap: 15px;
+        text-align: center;
 
-        flex-direction: column;
+        order: 1;
 
-        align-items: center;
+    }
+
+
+    .donutWrapper {
+
+        order: 2;
+
+        margin: auto;
+
+    }
+
+
+    .rightPercentage {
+
+        text-align: center;
+
+        order: 3;
 
     }
 

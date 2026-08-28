@@ -24,44 +24,83 @@ let profile = null;
    ELEMENTS
 ===================================== */
 
-const startScreen = document.getElementById("startScreen");
-const startButton = document.getElementById("startButton");
-const app = document.getElementById("app");
+const startScreen =
+    document.getElementById("startScreen");
 
-const question = document.getElementById("question");
-const category = document.getElementById("category");
-const counter = document.getElementById("counter");
+const startButton =
+    document.getElementById("startButton");
 
-const agreeButton = document.getElementById("agreeButton");
-const disagreeButton = document.getElementById("disagreeButton");
+const app =
+    document.getElementById("app");
 
-const results = document.getElementById("results");
-const nextButton = document.getElementById("nextButton");
+const question =
+    document.getElementById("question");
 
-const agreePercent = document.getElementById("agreePercent");
-const disagreePercent = document.getElementById("disagreePercent");
-const agreeBar = document.getElementById("agreeBar");
+const category =
+    document.getElementById("category");
 
-const voteCount = document.getElementById("voteCount");
-const resultMessage = document.getElementById("resultMessage");
+const counter =
+    document.getElementById("counter");
+
+const agreeButton =
+    document.getElementById("agreeButton");
+
+const disagreeButton =
+    document.getElementById("disagreeButton");
+
+const results =
+    document.getElementById("results");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const agreePercent =
+    document.getElementById("agreePercent");
+
+const agreePercentSmall =
+    document.getElementById("agreePercentSmall");
+
+const disagreePercent =
+    document.getElementById("disagreePercent");
+
+const agreeCircle =
+    document.getElementById("agreeCircle");
+
+const voteCount =
+    document.getElementById("voteCount");
+
+const resultMessage =
+    document.getElementById("resultMessage");
 
 
 /* =====================================
    START SCREEN
 ===================================== */
 
-startButton.addEventListener("click", async () => {
+startButton.addEventListener(
+    "click",
+    async () => {
 
-    startScreen.style.opacity = "0";
-    startScreen.style.transform = "scale(1.05)";
+        startScreen.style.opacity = "0";
 
-    setTimeout(() => {
-        startScreen.style.display = "none";
-        app.classList.add("active");
-    }, 600);
+        startScreen.style.transform =
+            "scale(1.05)";
 
-    await initialize();
-});
+
+        setTimeout(() => {
+
+            startScreen.style.display =
+                "none";
+
+            app.classList.add("active");
+
+        }, 600);
+
+
+        await initialize();
+
+    }
+);
 
 
 /* =====================================
@@ -69,8 +108,11 @@ startButton.addEventListener("click", async () => {
 ===================================== */
 
 async function initialize() {
+
     await checkUser();
+
     await loadQuestions();
+
 }
 
 
@@ -80,26 +122,44 @@ async function initialize() {
 
 async function checkUser() {
 
-    const { data } = await db.auth.getSession();
+    const {
+        data
+    } = await db.auth.getSession();
 
-    user = data.session?.user || null;
+
+    user =
+        data.session?.user || null;
+
 
     updateLoginButton();
 
+
     if (user) {
+
         await loadProfile();
+
     }
 
-    db.auth.onAuthStateChange(async (_event, session) => {
 
-        user = session?.user || null;
+    db.auth.onAuthStateChange(
+        async (_event, session) => {
 
-        updateLoginButton();
+            user =
+                session?.user || null;
 
-        if (user) {
-            await loadProfile();
+
+            updateLoginButton();
+
+
+            if (user) {
+
+                await loadProfile();
+
+            }
+
         }
-    });
+    );
+
 }
 
 
@@ -111,28 +171,46 @@ async function loadProfile() {
 
     if (!user) return;
 
-    const { data, error } = await db
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle();
+
 
     if (error) {
-        console.error("Profile error:", error);
+
+        console.error(
+            "Profile error:",
+            error
+        );
+
         return;
+
     }
+
 
     profile = data;
 
+
     updateLoginButton();
+
 
     if (!profile) {
 
         setTimeout(() => {
+
             askForUsername();
+
         }, 500);
 
     }
+
 }
 
 
@@ -142,23 +220,36 @@ async function loadProfile() {
 
 function updateLoginButton() {
 
-    const button = document.getElementById("loginButton");
+    const button =
+        document.getElementById(
+            "loginButton"
+        );
+
 
     if (!button) return;
 
+
     if (user && profile) {
 
-        button.textContent = `👤 ${profile.username}`;
-
-    } else if (user) {
-
-        button.textContent = "👤 Account";
-
-    } else {
-
-        button.textContent = "🔐 Login";
+        button.textContent =
+            `👤 ${profile.username}`;
 
     }
+
+    else if (user) {
+
+        button.textContent =
+            "👤 Account";
+
+    }
+
+    else {
+
+        button.textContent =
+            "🔐 Login";
+
+    }
+
 }
 
 
@@ -168,23 +259,41 @@ function updateLoginButton() {
 
 async function loadQuestions() {
 
-    counter.textContent = "Loading questions...";
+    counter.textContent =
+        "Loading questions...";
 
-    const { data, error } = await db
-        .from("questions")
-        .select("id, question, category");
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("questions")
+            .select(
+                "id, question, category"
+            );
+
 
     if (error) {
 
-        console.error("Questions error:", error);
+        console.error(
+            "Questions error:",
+            error
+        );
+
 
         question.textContent =
             "Couldn't load questions 😭";
 
+
         return;
+
     }
 
-    questions = data || [];
+
+    questions =
+        data || [];
+
 
     if (!questions.length) {
 
@@ -192,35 +301,67 @@ async function loadQuestions() {
             "No questions found.";
 
         return;
+
     }
 
+
     loadRandomQuestion();
+
 }
 
 
 function loadRandomQuestion() {
 
-    if (!questions.length) return;
+    if (!questions.length)
+        return;
+
 
     const random =
-        Math.floor(Math.random() * questions.length);
+        Math.floor(
+            Math.random() *
+            questions.length
+        );
 
-    currentQuestion = questions[random];
+
+    currentQuestion =
+        questions[random];
+
 
     question.textContent =
         `"${currentQuestion.question}"`;
 
+
     category.textContent =
         currentQuestion.category || "";
+
 
     counter.textContent =
         "What do you think?";
 
-    results.classList.add("hidden");
-    nextButton.classList.add("hidden");
 
-    agreeButton.disabled = false;
-    disagreeButton.disabled = false;
+    results.classList.add(
+        "hidden"
+    );
+
+
+    nextButton.classList.add(
+        "hidden"
+    );
+
+
+    agreeButton.disabled =
+        false;
+
+    disagreeButton.disabled =
+        false;
+
+
+    /*
+       Reset donut for the next question.
+    */
+
+    resetDonut();
+
 }
 
 
@@ -228,56 +369,100 @@ function loadRandomQuestion() {
    VOTING
 ===================================== */
 
-agreeButton.addEventListener("click", () => {
-    submitVote("agree");
-});
+agreeButton.addEventListener(
+    "click",
+    () => {
 
-disagreeButton.addEventListener("click", () => {
-    submitVote("disagree");
-});
+        submitVote("agree");
+
+    }
+);
+
+
+disagreeButton.addEventListener(
+    "click",
+    () => {
+
+        submitVote("disagree");
+
+    }
+);
 
 
 async function submitVote(type) {
 
-    if (!currentQuestion) return;
+    if (!currentQuestion)
+        return;
 
-    agreeButton.disabled = true;
-    disagreeButton.disabled = true;
 
-    const { error } = await db.rpc(
-        "submit_vote",
-        {
-            p_question_id: currentQuestion.id,
-            p_vote: type
-        }
-    );
+    agreeButton.disabled =
+        true;
+
+    disagreeButton.disabled =
+        true;
+
+
+    const {
+        error
+    } =
+        await db.rpc(
+            "submit_vote",
+            {
+                p_question_id:
+                    currentQuestion.id,
+
+                p_vote:
+                    type
+            }
+        );
+
 
     if (error) {
 
-        console.error("Vote error:", error);
+        console.error(
+            "Vote error:",
+            error
+        );
+
 
         resultMessage.textContent =
             "Couldn't save your vote 😭";
 
-        results.classList.remove("hidden");
 
-        agreeButton.disabled = false;
-        disagreeButton.disabled = false;
+        results.classList.remove(
+            "hidden"
+        );
+
+
+        agreeButton.disabled =
+            false;
+
+        disagreeButton.disabled =
+            false;
+
 
         return;
+
     }
 
 
-    /* Update user's question count */
+    /*
+       Update user's question count.
+    */
 
     if (user) {
+
         await loadProfile();
+
     }
 
 
-    /* Load REAL votes from Supabase */
+    /*
+       Load real votes.
+    */
 
     await showResults(type);
+
 }
 
 
@@ -285,9 +470,13 @@ async function submitVote(type) {
    RESULTS
 ===================================== */
 
-async function showResults(userVote) {
+async function showResults(
+    userVote
+) {
 
-    if (!currentQuestion) return;
+    if (!currentQuestion)
+        return;
+
 
     console.log(
         "Loading votes for question:",
@@ -295,13 +484,17 @@ async function showResults(userVote) {
     );
 
 
-    const { data, error } = await db
-        .from("votes")
-        .select("vote")
-        .eq(
-            "question_id",
-            currentQuestion.id
-        );
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("votes")
+            .select("vote")
+            .eq(
+                "question_id",
+                currentQuestion.id
+            );
 
 
     if (error) {
@@ -311,12 +504,18 @@ async function showResults(userVote) {
             error
         );
 
+
         resultMessage.textContent =
             "Couldn't load the results 😭";
 
-        results.classList.remove("hidden");
+
+        results.classList.remove(
+            "hidden"
+        );
+
 
         return;
+
     }
 
 
@@ -326,63 +525,122 @@ async function showResults(userVote) {
     );
 
 
-    const votes = data || [];
+    const votes =
+        data || [];
 
-    const total = votes.length;
 
-    const agrees = votes.filter(
-        vote => vote.vote === "agree"
-    ).length;
+    const total =
+        votes.length;
 
-    const disagrees = votes.filter(
-        vote => vote.vote === "disagree"
-    ).length;
+
+    const agrees =
+        votes.filter(
+            vote =>
+                vote.vote === "agree"
+        ).length;
+
+
+    const disagrees =
+        votes.filter(
+            vote =>
+                vote.vote === "disagree"
+        ).length;
 
 
     let agreePercentage = 0;
+
     let disagreePercentage = 0;
 
 
     if (total > 0) {
 
         agreePercentage =
-            Math.round((agrees / total) * 100);
+            Math.round(
+                (agrees / total) *
+                100
+            );
+
 
         disagreePercentage =
-            Math.round((disagrees / total) * 100);
+            100 -
+            agreePercentage;
 
     }
 
 
-    agreePercent.textContent =
+    /*
+       Show results first.
+    */
+
+    results.classList.remove(
+        "hidden"
+    );
+
+
+    /*
+       Small percentages.
+    */
+
+    agreePercentSmall.textContent =
         `${agreePercentage}%`;
+
 
     disagreePercent.textContent =
         `${disagreePercentage}%`;
 
 
-    agreeBar.style.width =
-        `${agreePercentage}%`;
+    /*
+       Animate donut.
+    */
 
+    animateDonut(
+        agreePercentage
+    );
+
+
+    /*
+       Animate center percentage.
+    */
+
+    animatePercentage(
+        agreePercent,
+        agreePercentage
+    );
+
+
+    /*
+       Vote count.
+    */
 
     voteCount.textContent =
-        `${total} ${total === 1 ? "vote" : "votes"}`;
+        `${total} ${
+            total === 1
+                ? "vote"
+                : "votes"
+        }`;
 
 
-    /* Result message */
+    /*
+       Result message.
+    */
 
     if (total === 1) {
 
         resultMessage.textContent =
             "You're the first person to vote! 👀";
 
-    } else {
+    }
+
+    else {
 
         const majorityIsAgree =
             agreePercentage >= 50;
 
+
         const userIsWithMajority =
-            (userVote === "agree") === majorityIsAgree;
+            (
+                userVote === "agree"
+            ) === majorityIsAgree;
 
 
         if (userIsWithMajority) {
@@ -390,18 +648,199 @@ async function showResults(userVote) {
             resultMessage.textContent =
                 "You're with the majority! 😎";
 
-        } else {
+        }
+
+        else {
 
             resultMessage.textContent =
                 "You're in the minority. Bold move. 😭";
 
         }
+
     }
 
 
-    results.classList.remove("hidden");
+    nextButton.classList.remove(
+        "hidden"
+    );
 
-    nextButton.classList.remove("hidden");
+}
+
+
+/* =====================================
+   DONUT ANIMATION
+===================================== */
+
+function animateDonut(
+    percentage
+) {
+
+    if (!agreeCircle)
+        return;
+
+
+    const circumference =
+        2 *
+        Math.PI *
+        78;
+
+
+    const targetOffset =
+        circumference -
+        (
+            percentage / 100
+        ) *
+        circumference;
+
+
+    /*
+       Start from empty.
+    */
+
+    agreeCircle.style.transition =
+        "none";
+
+
+    agreeCircle.style.strokeDasharray =
+        circumference;
+
+
+    agreeCircle.style.strokeDashoffset =
+        circumference;
+
+
+    /*
+       Force browser to
+       register the reset.
+    */
+
+    void agreeCircle.offsetWidth;
+
+
+    /*
+       Animate clockwise.
+    */
+
+    agreeCircle.style.transition =
+        "stroke-dashoffset 1.25s cubic-bezier(0.22, 1, 0.36, 1)";
+
+
+    agreeCircle.style.strokeDashoffset =
+        targetOffset;
+
+}
+
+
+/* =====================================
+   PERCENTAGE NUMBER ANIMATION
+===================================== */
+
+function animatePercentage(
+    element,
+    target
+) {
+
+    const duration = 1000;
+
+    const startTime =
+        performance.now();
+
+
+    function update(
+        currentTime
+    ) {
+
+        const elapsed =
+            currentTime -
+            startTime;
+
+
+        const progress =
+            Math.min(
+                elapsed / duration,
+                1
+            );
+
+
+        /*
+           Smooth ease-out.
+        */
+
+        const eased =
+            1 -
+            Math.pow(
+                1 - progress,
+                3
+            );
+
+
+        const current =
+            Math.round(
+                eased * target
+            );
+
+
+        element.textContent =
+            `${current}%`;
+
+
+        if (progress < 1) {
+
+            requestAnimationFrame(
+                update
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        update
+    );
+
+}
+
+
+/* =====================================
+   RESET DONUT
+===================================== */
+
+function resetDonut() {
+
+    if (!agreeCircle)
+        return;
+
+
+    const circumference =
+        2 *
+        Math.PI *
+        78;
+
+
+    agreeCircle.style.transition =
+        "none";
+
+
+    agreeCircle.style.strokeDasharray =
+        circumference;
+
+
+    agreeCircle.style.strokeDashoffset =
+        circumference;
+
+
+    agreePercent.textContent =
+        "0%";
+
+
+    agreePercentSmall.textContent =
+        "0%";
+
+
+    disagreePercent.textContent =
+        "0%";
+
 }
 
 
@@ -420,47 +859,74 @@ nextButton.addEventListener(
 ===================================== */
 
 const loginButton =
-    document.getElementById("loginButton");
+    document.getElementById(
+        "loginButton"
+    );
+
 
 const loginModal =
-    document.getElementById("loginModal");
+    document.getElementById(
+        "loginModal"
+    );
+
 
 const closeLogin =
-    document.getElementById("closeLogin");
+    document.getElementById(
+        "closeLogin"
+    );
+
 
 const googleButton =
-    document.getElementById("googleButton");
+    document.getElementById(
+        "googleButton"
+    );
 
 
-loginButton.addEventListener("click", () => {
+loginButton.addEventListener(
+    "click",
+    () => {
 
-    if (user && profile) {
+        if (user && profile) {
 
-        openUserModal();
+            openUserModal();
 
-    } else {
+        }
 
-        loginModal.classList.remove("hidden");
+        else {
+
+            loginModal.classList.remove(
+                "hidden"
+            );
+
+        }
 
     }
-});
+);
 
 
-closeLogin.addEventListener("click", () => {
+closeLogin.addEventListener(
+    "click",
+    () => {
 
-    loginModal.classList.add("hidden");
+        loginModal.classList.add(
+            "hidden"
+        );
 
-});
+    }
+);
 
 
 googleButton.addEventListener(
     "click",
     async () => {
 
-        const { error } =
+        const {
+            error
+        } =
             await db.auth.signInWithOAuth({
 
-                provider: "google",
+                provider:
+                    "google",
 
                 options: {
 
@@ -473,7 +939,12 @@ googleButton.addEventListener(
 
 
         if (error) {
-            console.error("Google login error:", error);
+
+            console.error(
+                "Google login error:",
+                error
+            );
+
         }
 
     }
@@ -485,25 +956,42 @@ googleButton.addEventListener(
 ===================================== */
 
 const usernameModal =
-    document.getElementById("usernameModal");
+    document.getElementById(
+        "usernameModal"
+    );
+
 
 const usernameInput =
-    document.getElementById("usernameInput");
+    document.getElementById(
+        "usernameInput"
+    );
+
 
 const usernameButton =
-    document.getElementById("usernameButton");
+    document.getElementById(
+        "usernameButton"
+    );
+
 
 const usernameError =
-    document.getElementById("usernameError");
+    document.getElementById(
+        "usernameError"
+    );
 
 
 function askForUsername() {
 
-    usernameModal.classList.remove("hidden");
+    usernameModal.classList.remove(
+        "hidden"
+    );
+
 
     setTimeout(() => {
+
         usernameInput.focus();
+
     }, 100);
+
 }
 
 
@@ -517,8 +1005,12 @@ usernameInput.addEventListener(
     "keydown",
     event => {
 
-        if (event.key === "Enter") {
+        if (
+            event.key === "Enter"
+        ) {
+
             createUsername();
+
         }
 
     }
@@ -530,50 +1022,74 @@ async function createUsername() {
     const username =
         usernameInput.value.trim();
 
-    usernameError.textContent = "";
+
+    usernameError.textContent =
+        "";
 
 
-    if (username.length < 3) {
+    if (
+        username.length < 3
+    ) {
 
         usernameError.textContent =
             "At least 3 characters 😭";
 
         return;
+
     }
 
 
-    if (username.length > 20) {
+    if (
+        username.length > 20
+    ) {
 
         usernameError.textContent =
             "Maximum 20 characters.";
 
         return;
+
     }
 
 
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    if (
+        !/^[a-zA-Z0-9_]+$/.test(
+            username
+        )
+    ) {
 
         usernameError.textContent =
             "Only letters, numbers and _.";
 
         return;
+
     }
 
 
-    usernameButton.disabled = true;
+    usernameButton.disabled =
+        true;
 
 
-    const { data, error } = await db
-        .from("profiles")
-        .insert({
-            id: user.id,
-            username: username
-        })
-        .select()
-        .single();
+    const {
+        data,
+        error
+    } =
+        await db
+            .from("profiles")
+            .insert({
+
+                id:
+                    user.id,
+
+                username:
+                    username
+
+            })
+            .select()
+            .single();
 
 
-    usernameButton.disabled = false;
+    usernameButton.disabled =
+        false;
 
 
     if (error) {
@@ -584,39 +1100,57 @@ async function createUsername() {
         );
 
 
-        if (error.code === "23505") {
+        if (
+            error.code ===
+            "23505"
+        ) {
 
             usernameError.textContent =
                 "That username is already taken 😭";
 
-        } else {
+        }
+
+        else {
 
             usernameError.textContent =
                 "Something went wrong.";
 
         }
 
+
         return;
+
     }
 
 
-    profile = data;
+    profile =
+        data;
 
-    usernameInput.value = "";
 
-    usernameModal.classList.add("hidden");
+    usernameInput.value =
+        "";
+
+
+    usernameModal.classList.add(
+        "hidden"
+    );
+
 
     updateLoginButton();
 
 
     if (
-        typeof leaderboardModal !== "undefined" &&
-        !leaderboardModal.classList.contains("hidden")
+        typeof leaderboardModal !==
+        "undefined" &&
+        !leaderboardModal.classList.contains(
+            "hidden"
+        )
     ) {
 
         await loadLeaderboard();
 
     }
+
 }
 
 
@@ -625,23 +1159,37 @@ async function createUsername() {
 ===================================== */
 
 const leaderboardButton =
-    document.getElementById("leaderboardButton");
+    document.getElementById(
+        "leaderboardButton"
+    );
+
 
 const leaderboardModal =
-    document.getElementById("leaderboardModal");
+    document.getElementById(
+        "leaderboardModal"
+    );
+
 
 const closeLeaderboard =
-    document.getElementById("closeLeaderboard");
+    document.getElementById(
+        "closeLeaderboard"
+    );
+
 
 const leaderboardList =
-    document.getElementById("leaderboardList");
+    document.getElementById(
+        "leaderboardList"
+    );
 
 
 leaderboardButton.addEventListener(
     "click",
     async () => {
 
-        leaderboardModal.classList.remove("hidden");
+        leaderboardModal.classList.remove(
+            "hidden"
+        );
+
 
         await loadLeaderboard();
 
@@ -653,7 +1201,9 @@ closeLeaderboard.addEventListener(
     "click",
     () => {
 
-        leaderboardModal.classList.add("hidden");
+        leaderboardModal.classList.add(
+            "hidden"
+        );
 
     }
 );
@@ -665,7 +1215,10 @@ async function loadLeaderboard() {
         "Loading...";
 
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await db
             .from("profiles")
             .select(
@@ -687,22 +1240,29 @@ async function loadLeaderboard() {
             error
         );
 
+
         leaderboardList.textContent =
             "Couldn't load leaderboard.";
 
         return;
+
     }
 
 
-    leaderboardList.innerHTML = "";
+    leaderboardList.innerHTML =
+        "";
 
 
-    if (!data || !data.length) {
+    if (
+        !data ||
+        !data.length
+    ) {
 
         leaderboardList.textContent =
             "No players yet. Be the first! 👀";
 
         return;
+
     }
 
 
@@ -710,17 +1270,35 @@ async function loadLeaderboard() {
         (player, index) => {
 
             const item =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             item.className =
                 "leaderboardItem";
 
 
-            let rank = index + 1;
+            let rank =
+                index + 1;
 
-            if (index === 0) rank = "🥇";
-            if (index === 1) rank = "🥈";
-            if (index === 2) rank = "🥉";
+
+            if (
+                index === 0
+            )
+                rank = "🥇";
+
+
+            if (
+                index === 1
+            )
+                rank = "🥈";
+
+
+            if (
+                index === 2
+            )
+                rank = "🥉";
 
 
             item.innerHTML = `
@@ -730,7 +1308,9 @@ async function loadLeaderboard() {
                 </span>
 
                 <span class="player">
-                    ${escapeHtml(player.username)}
+                    ${escapeHtml(
+                        player.username
+                    )}
                 </span>
 
                 <span class="score">
@@ -740,10 +1320,13 @@ async function loadLeaderboard() {
             `;
 
 
-            leaderboardList.appendChild(item);
+            leaderboardList.appendChild(
+                item
+            );
 
         }
     );
+
 }
 
 
@@ -752,29 +1335,45 @@ async function loadLeaderboard() {
 ===================================== */
 
 const userModal =
-    document.getElementById("userModal");
+    document.getElementById(
+        "userModal"
+    );
+
 
 const closeUser =
-    document.getElementById("closeUser");
+    document.getElementById(
+        "closeUser"
+    );
+
 
 const logoutButton =
-    document.getElementById("logoutButton");
+    document.getElementById(
+        "logoutButton"
+    );
 
 
 function openUserModal() {
 
-    if (!profile) return;
+    if (!profile)
+        return;
 
 
-    document.getElementById("userName").textContent =
+    document.getElementById(
+        "userName"
+    ).textContent =
         profile.username;
 
 
-    document.getElementById("userQuestions").textContent =
+    document.getElementById(
+        "userQuestions"
+    ).textContent =
         profile.questions_answered;
 
 
-    userModal.classList.remove("hidden");
+    userModal.classList.remove(
+        "hidden"
+    );
+
 }
 
 
@@ -782,7 +1381,9 @@ closeUser.addEventListener(
     "click",
     () => {
 
-        userModal.classList.add("hidden");
+        userModal.classList.add(
+            "hidden"
+        );
 
     }
 );
@@ -794,10 +1395,16 @@ logoutButton.addEventListener(
 
         await db.auth.signOut();
 
+
         user = null;
+
         profile = null;
 
-        userModal.classList.add("hidden");
+
+        userModal.classList.add(
+            "hidden"
+        );
+
 
         updateLoginButton();
 
@@ -809,12 +1416,20 @@ logoutButton.addEventListener(
    ESCAPE HTML
 ===================================== */
 
-function escapeHtml(text) {
+function escapeHtml(
+    text
+) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    div.textContent = text;
+
+    div.textContent =
+        text;
+
 
     return div.innerHTML;
+
 }

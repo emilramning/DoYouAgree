@@ -2,29 +2,18 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Do You Agree?</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-
-<!-- =====================================
-     START SCREEN
-===================================== -->
+<!-- START SCREEN -->
 
 <div id="startScreen">
 
@@ -32,9 +21,7 @@
 
         <h1>Do you agree?</h1>
 
-        <p>
-            Everyone has an opinion.
-        </p>
+        <p>Everyone has an opinion.</p>
 
         <button id="startButton">
             START
@@ -45,9 +32,7 @@
 </div>
 
 
-<!-- =====================================
-     APP
-===================================== -->
+<!-- APP -->
 
 <div id="app">
 
@@ -59,17 +44,11 @@
 
     <div class="headerButtons">
 
-        <button
-            id="leaderboardButton"
-            class="headerButton"
-        >
+        <button id="leaderboardButton" class="headerButton">
             🏆 Leaderboard
         </button>
 
-        <button
-            id="loginButton"
-            class="headerButton"
-        >
+        <button id="loginButton" class="headerButton">
             🔐 Login
         </button>
 
@@ -80,20 +59,14 @@
 
 <main>
 
-    <div
-        id="counter"
-        class="counter"
-    >
+    <div id="counter" class="counter">
         Loading...
     </div>
 
 
     <div class="questionCard">
 
-        <div
-            id="category"
-            class="category"
-        >
+        <div id="category" class="category">
             RANDOM
         </div>
 
@@ -107,19 +80,12 @@
 
         <div class="voteButtons">
 
-            <button
-                id="agreeButton"
-                class="vote agree"
-            >
+            <button id="agreeButton" class="vote agree">
                 👍
                 <span>AGREE</span>
             </button>
 
-
-            <button
-                id="disagreeButton"
-                class="vote disagree"
-            >
+            <button id="disagreeButton" class="vote disagree">
                 👎
                 <span>DON'T AGREE</span>
             </button>
@@ -127,150 +93,102 @@
         </div>
 
 
-        <!-- =====================================
-             RESULTS
-        ===================================== -->
+        <!-- RESULTS -->
 
-        <div
-            id="results"
-            class="results hidden"
-        >
+        <div id="results" class="results hidden">
 
             <p class="resultTitle">
                 Here's what everyone thinks
             </p>
 
 
-            <!-- DONUT CHART -->
-
-            <div class="resultRing">
-
-                <svg
-                    class="ringSvg"
-                    viewBox="0 0 200 200"
-                >
-
-                    <!-- Background -->
-
-                    <circle
-                        class="ringBackground"
-                        cx="100"
-                        cy="100"
-                        r="78"
-                    ></circle>
+            <div class="donutResult">
 
 
-                    <!-- Agree -->
+                <!-- LEFT -->
 
-                    <circle
-                        id="agreeCircle"
-                        class="ringAgree"
-                        cx="100"
-                        cy="100"
-                        r="78"
-                    ></circle>
-
-                </svg>
-
-
-                <!-- Center of donut -->
-
-                <div class="ringCenter">
+                <div class="sidePercentage leftPercentage">
 
                     <strong id="agreePercent">
                         0%
                     </strong>
 
                     <span>
-                        AGREE
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <!-- PERCENTAGE BREAKDOWN -->
-
-            <div class="percentageBreakdown">
-
-                <div class="resultOption">
-
-                    <span class="resultDot agreeDot"></span>
-
-                    <span>
                         Agree
                     </span>
 
-                    <strong id="agreePercentSmall">
-                        0%
-                    </strong>
+                </div>
+
+
+                <!-- DONUT -->
+
+                <div class="donutWrapper">
+
+                    <div
+                        id="donut"
+                        class="donut"
+                    >
+
+                        <div class="donutCenter">
+
+                            <span>
+                                TOTAL
+                            </span>
+
+                            <strong id="donutTotal">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
 
-                <div class="resultOption">
+                <!-- RIGHT -->
 
-                    <span class="resultDot disagreeDot"></span>
-
-                    <span>
-                        Don't Agree
-                    </span>
+                <div class="sidePercentage rightPercentage">
 
                     <strong id="disagreePercent">
                         0%
                     </strong>
 
+                    <span>
+                        Don't Agree
+                    </span>
+
                 </div>
 
             </div>
 
 
-            <p
-                id="voteCount"
-                class="voteCount"
-            >
+            <p id="voteCount" class="voteCount">
                 0 votes
             </p>
 
 
-            <p
-                id="resultMessage"
-                class="resultMessage"
-            ></p>
+            <p id="resultMessage" class="resultMessage"></p>
 
         </div>
 
     </div>
 
 
-    <!-- NEXT QUESTION -->
-
-    <button
-        id="nextButton"
-        class="nextButton hidden"
-    >
+    <button id="nextButton" class="nextButton hidden">
         Next Question →
     </button>
 
 </main>
 
 
-<!-- =====================================
-     LOGIN MODAL
-===================================== -->
+<!-- LOGIN MODAL -->
 
-<div
-    id="loginModal"
-    class="modal hidden"
->
+<div id="loginModal" class="modal hidden">
 
     <div class="modalBox">
 
-        <button
-            id="closeLogin"
-            class="closeButton"
-        >
+        <button id="closeLogin" class="closeButton">
             ×
         </button>
 
@@ -282,10 +200,7 @@
             Log in to appear on the leaderboard.
         </p>
 
-        <button
-            id="googleButton"
-            class="googleButton"
-        >
+        <button id="googleButton" class="googleButton">
 
             <span class="googleIcon">
                 G
@@ -300,14 +215,9 @@
 </div>
 
 
-<!-- =====================================
-     USERNAME MODAL
-===================================== -->
+<!-- USERNAME MODAL -->
 
-<div
-    id="usernameModal"
-    class="modal hidden"
->
+<div id="usernameModal" class="modal hidden">
 
     <div class="modalBox">
 
@@ -319,7 +229,6 @@
             This is what people will see on the leaderboard.
         </p>
 
-
         <input
             id="usernameInput"
             type="text"
@@ -327,40 +236,24 @@
             placeholder="Your username"
         >
 
-
-        <button
-            id="usernameButton"
-            class="continueButton"
-        >
+        <button id="usernameButton" class="continueButton">
             Continue
         </button>
 
-
-        <p
-            id="usernameError"
-            class="error"
-        ></p>
+        <p id="usernameError" class="error"></p>
 
     </div>
 
 </div>
 
 
-<!-- =====================================
-     LEADERBOARD
-===================================== -->
+<!-- LEADERBOARD -->
 
-<div
-    id="leaderboardModal"
-    class="modal hidden"
->
+<div id="leaderboardModal" class="modal hidden">
 
     <div class="leaderboardBox">
 
-        <button
-            id="closeLeaderboard"
-            class="closeButton"
-        >
+        <button id="closeLeaderboard" class="closeButton">
             ×
         </button>
 
@@ -372,10 +265,7 @@
             Most questions answered
         </p>
 
-        <div
-            id="leaderboardList"
-            class="leaderboardList"
-        >
+        <div id="leaderboardList" class="leaderboardList">
             Loading...
         </div>
 
@@ -384,21 +274,13 @@
 </div>
 
 
-<!-- =====================================
-     USER MENU
-===================================== -->
+<!-- USER MENU -->
 
-<div
-    id="userModal"
-    class="modal hidden"
->
+<div id="userModal" class="modal hidden">
 
     <div class="modalBox">
 
-        <button
-            id="closeUser"
-            class="closeButton"
-        >
+        <button id="closeUser" class="closeButton">
             ×
         </button>
 
@@ -422,10 +304,7 @@
 
         </div>
 
-        <button
-            id="logoutButton"
-            class="logoutButton"
-        >
+        <button id="logoutButton" class="logoutButton">
             Log out
         </button>
 
@@ -442,14 +321,11 @@
 </div>
 
 
-<!-- =====================================
-     SUPABASE
-===================================== -->
+<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="script.js"></script>
 
 </body>
-
 </html>

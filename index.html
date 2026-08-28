@@ -19,7 +19,6 @@
 
 </head>
 
-
 <body>
 
 
@@ -46,20 +45,17 @@
 </div>
 
 
-
 <!-- =====================================
      APP
 ===================================== -->
 
 <div id="app">
 
-
 <header>
 
     <div class="logo">
         Do You Agree?
     </div>
-
 
     <div class="headerButtons">
 
@@ -69,7 +65,6 @@
         >
             🏆 Leaderboard
         </button>
-
 
         <button
             id="loginButton"
@@ -83,9 +78,7 @@
 </header>
 
 
-
 <main>
-
 
     <div
         id="counter"
@@ -96,7 +89,6 @@
 
 
     <div class="questionCard">
-
 
         <div
             id="category"
@@ -111,20 +103,16 @@
         </h2>
 
 
-        <div class="voteButtons">
+        <!-- VOTE BUTTONS -->
 
+        <div class="voteButtons">
 
             <button
                 id="agreeButton"
                 class="vote agree"
             >
-
                 👍
-
-                <span>
-                    AGREE
-                </span>
-
+                <span>AGREE</span>
             </button>
 
 
@@ -132,21 +120,16 @@
                 id="disagreeButton"
                 class="vote disagree"
             >
-
                 👎
-
-                <span>
-                    DON'T AGREE
-                </span>
-
+                <span>DON'T AGREE</span>
             </button>
-
 
         </div>
 
 
-
-        <!-- RESULTS -->
+        <!-- =====================================
+             RESULTS
+        ===================================== -->
 
         <div
             id="results"
@@ -158,41 +141,87 @@
             </p>
 
 
-            <div class="percentages">
+            <!-- DONUT CHART -->
+
+            <div class="resultRing">
+
+                <svg
+                    class="ringSvg"
+                    viewBox="0 0 200 200"
+                >
+
+                    <!-- Background -->
+
+                    <circle
+                        class="ringBackground"
+                        cx="100"
+                        cy="100"
+                        r="78"
+                    ></circle>
 
 
-                <div class="percentage">
+                    <!-- Agree -->
+
+                    <circle
+                        id="agreeCircle"
+                        class="ringAgree"
+                        cx="100"
+                        cy="100"
+                        r="78"
+                    ></circle>
+
+                </svg>
+
+
+                <!-- Center of donut -->
+
+                <div class="ringCenter">
 
                     <strong id="agreePercent">
                         0%
                     </strong>
 
                     <span>
-                        Agree
+                        AGREE
                     </span>
 
                 </div>
 
+            </div>
 
-                <div class="percentage">
 
-                    <strong id="disagreePercent">
+            <!-- PERCENTAGE BREAKDOWN -->
+
+            <div class="percentageBreakdown">
+
+                <div class="resultOption">
+
+                    <span class="resultDot agreeDot"></span>
+
+                    <span>
+                        Agree
+                    </span>
+
+                    <strong id="agreePercentSmall">
                         0%
                     </strong>
+
+                </div>
+
+
+                <div class="resultOption">
+
+                    <span class="resultDot disagreeDot"></span>
 
                     <span>
                         Don't Agree
                     </span>
 
+                    <strong id="disagreePercent">
+                        0%
+                    </strong>
+
                 </div>
-
-
-            </div>
-
-
-            <div class="resultBar">
-
-                <div id="agreeBar"></div>
 
             </div>
 
@@ -210,12 +239,12 @@
                 class="resultMessage"
             ></p>
 
-
         </div>
-
 
     </div>
 
+
+    <!-- NEXT QUESTION -->
 
     <button
         id="nextButton"
@@ -224,9 +253,7 @@
         Next Question →
     </button>
 
-
 </main>
-
 
 
 <!-- =====================================
@@ -240,7 +267,6 @@
 
     <div class="modalBox">
 
-
         <button
             id="closeLogin"
             class="closeButton"
@@ -248,16 +274,13 @@
             ×
         </button>
 
-
         <h2>
             Welcome 👋
         </h2>
 
-
         <p class="modalDescription">
             Log in to appear on the leaderboard.
         </p>
-
 
         <button
             id="googleButton"
@@ -272,11 +295,9 @@
 
         </button>
 
-
     </div>
 
 </div>
-
 
 
 <!-- =====================================
@@ -325,7 +346,6 @@
 </div>
 
 
-
 <!-- =====================================
      LEADERBOARD
 ===================================== -->
@@ -337,7 +357,6 @@
 
     <div class="leaderboardBox">
 
-
         <button
             id="closeLeaderboard"
             class="closeButton"
@@ -345,16 +364,13 @@
             ×
         </button>
 
-
         <h2>
             🏆 Top 50
         </h2>
 
-
         <p class="modalDescription">
             Most questions answered
         </p>
-
 
         <div
             id="leaderboardList"
@@ -363,11 +379,9 @@
             Loading...
         </div>
 
-
     </div>
 
 </div>
-
 
 
 <!-- =====================================
@@ -388,15 +402,14 @@
             ×
         </button>
 
-
         <h2 id="userName">
             User
         </h2>
 
-
         <div class="userStats">
 
             <div>
+
                 <strong id="userQuestions">
                     0
                 </strong>
@@ -404,10 +417,10 @@
                 <span>
                     Questions answered
                 </span>
+
             </div>
 
         </div>
-
 
         <button
             id="logoutButton"
@@ -421,24 +434,21 @@
 </div>
 
 
-
 <footer>
-
     Made for people who have opinions.
-
 </footer>
 
 
 </div>
 
 
-
-<!-- SUPABASE -->
+<!-- =====================================
+     SUPABASE
+===================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="script.js"></script>
-
 
 </body>
 

@@ -57,14 +57,14 @@ const nextButton =
 const agreePercent =
     document.getElementById("agreePercent");
 
-const agreePercentSmall =
-    document.getElementById("agreePercentSmall");
-
 const disagreePercent =
     document.getElementById("disagreePercent");
 
-const agreeCircle =
-    document.getElementById("agreeCircle");
+const donut =
+    document.getElementById("donut");
+
+const donutTotal =
+    document.getElementById("donutTotal");
 
 const voteCount =
     document.getElementById("voteCount");
@@ -86,7 +86,6 @@ startButton.addEventListener(
         startScreen.style.transform =
             "scale(1.05)";
 
-
         setTimeout(() => {
 
             startScreen.style.display =
@@ -95,7 +94,6 @@ startButton.addEventListener(
             app.classList.add("active");
 
         }, 600);
-
 
         await initialize();
 
@@ -124,15 +122,13 @@ async function checkUser() {
 
     const {
         data
-    } = await db.auth.getSession();
-
+    } =
+        await db.auth.getSession();
 
     user =
         data.session?.user || null;
 
-
     updateLoginButton();
-
 
     if (user) {
 
@@ -140,16 +136,13 @@ async function checkUser() {
 
     }
 
-
     db.auth.onAuthStateChange(
         async (_event, session) => {
 
             user =
                 session?.user || null;
 
-
             updateLoginButton();
-
 
             if (user) {
 
@@ -171,7 +164,6 @@ async function loadProfile() {
 
     if (!user) return;
 
-
     const {
         data,
         error
@@ -181,7 +173,6 @@ async function loadProfile() {
             .select("*")
             .eq("id", user.id)
             .maybeSingle();
-
 
     if (error) {
 
@@ -194,12 +185,9 @@ async function loadProfile() {
 
     }
 
-
     profile = data;
 
-
     updateLoginButton();
-
 
     if (!profile) {
 
@@ -225,9 +213,7 @@ function updateLoginButton() {
             "loginButton"
         );
 
-
     if (!button) return;
-
 
     if (user && profile) {
 
@@ -262,7 +248,6 @@ async function loadQuestions() {
     counter.textContent =
         "Loading questions...";
 
-
     const {
         data,
         error
@@ -273,7 +258,6 @@ async function loadQuestions() {
                 "id, question, category"
             );
 
-
     if (error) {
 
         console.error(
@@ -281,19 +265,15 @@ async function loadQuestions() {
             error
         );
 
-
         question.textContent =
             "Couldn't load questions 😭";
-
 
         return;
 
     }
 
-
     questions =
         data || [];
-
 
     if (!questions.length) {
 
@@ -303,7 +283,6 @@ async function loadQuestions() {
         return;
 
     }
-
 
     loadRandomQuestion();
 
@@ -315,52 +294,37 @@ function loadRandomQuestion() {
     if (!questions.length)
         return;
 
-
     const random =
         Math.floor(
             Math.random() *
             questions.length
         );
 
-
     currentQuestion =
         questions[random];
-
 
     question.textContent =
         `"${currentQuestion.question}"`;
 
-
     category.textContent =
         currentQuestion.category || "";
 
-
     counter.textContent =
         "What do you think?";
-
 
     results.classList.add(
         "hidden"
     );
 
-
     nextButton.classList.add(
         "hidden"
     );
-
 
     agreeButton.disabled =
         false;
 
     disagreeButton.disabled =
         false;
-
-
-    /*
-       Reset donut for the next question.
-    */
-
-    resetDonut();
 
 }
 
@@ -394,13 +358,11 @@ async function submitVote(type) {
     if (!currentQuestion)
         return;
 
-
     agreeButton.disabled =
         true;
 
     disagreeButton.disabled =
         true;
-
 
     const {
         error
@@ -408,14 +370,15 @@ async function submitVote(type) {
         await db.rpc(
             "submit_vote",
             {
+
                 p_question_id:
                     currentQuestion.id,
 
                 p_vote:
                     type
+
             }
         );
-
 
     if (error) {
 
@@ -424,15 +387,12 @@ async function submitVote(type) {
             error
         );
 
-
         resultMessage.textContent =
             "Couldn't save your vote 😭";
-
 
         results.classList.remove(
             "hidden"
         );
-
 
         agreeButton.disabled =
             false;
@@ -440,15 +400,10 @@ async function submitVote(type) {
         disagreeButton.disabled =
             false;
 
-
         return;
 
     }
 
-
-    /*
-       Update user's question count.
-    */
 
     if (user) {
 
@@ -457,32 +412,19 @@ async function submitVote(type) {
     }
 
 
-    /*
-       Load real votes.
-    */
-
     await showResults(type);
 
 }
 
 
 /* =====================================
-   RESULTS
+   RESULTS / DONUT
 ===================================== */
 
-async function showResults(
-    userVote
-) {
+async function showResults(userVote) {
 
     if (!currentQuestion)
         return;
-
-
-    console.log(
-        "Loading votes for question:",
-        currentQuestion.id
-    );
-
 
     const {
         data,
@@ -496,7 +438,6 @@ async function showResults(
                 currentQuestion.id
             );
 
-
     if (error) {
 
         console.error(
@@ -504,30 +445,20 @@ async function showResults(
             error
         );
 
-
         resultMessage.textContent =
             "Couldn't load the results 😭";
-
 
         results.classList.remove(
             "hidden"
         );
-
 
         return;
 
     }
 
 
-    console.log(
-        "Votes returned from Supabase:",
-        data
-    );
-
-
     const votes =
         data || [];
-
 
     const total =
         votes.length;
@@ -556,61 +487,28 @@ async function showResults(
 
         agreePercentage =
             Math.round(
-                (agrees / total) *
-                100
+                (agrees / total) * 100
             );
 
-
         disagreePercentage =
-            100 -
-            agreePercentage;
+            100 - agreePercentage;
 
     }
 
 
-    /*
-       Show results first.
-    */
+    /* =================================
+       TEXT
+    ================================= */
 
-    results.classList.remove(
-        "hidden"
-    );
-
-
-    /*
-       Small percentages.
-    */
-
-    agreePercentSmall.textContent =
+    agreePercent.textContent =
         `${agreePercentage}%`;
-
 
     disagreePercent.textContent =
         `${disagreePercentage}%`;
 
+    donutTotal.textContent =
+        total;
 
-    /*
-       Animate donut.
-    */
-
-    animateDonut(
-        agreePercentage
-    );
-
-
-    /*
-       Animate center percentage.
-    */
-
-    animatePercentage(
-        agreePercent,
-        agreePercentage
-    );
-
-
-    /*
-       Vote count.
-    */
 
     voteCount.textContent =
         `${total} ${
@@ -620,9 +518,37 @@ async function showResults(
         }`;
 
 
+    /* =================================
+       DONUT
+    ================================= */
+
     /*
-       Result message.
+       Green = Agree
+       Red = Don't Agree
+
+       The donut starts at the top
+       and smoothly rotates into place.
     */
+
+    const agreeDegrees =
+        agreePercentage * 3.6;
+
+
+    donut.style.background =
+        `
+        conic-gradient(
+            from 0deg,
+            #20a464 0deg,
+            #20a464 ${agreeDegrees}deg,
+            #d84848 ${agreeDegrees}deg,
+            #d84848 360deg
+        )
+        `;
+
+
+    /* =================================
+       RESULT MESSAGE
+    ================================= */
 
     if (total === 1) {
 
@@ -636,11 +562,11 @@ async function showResults(
         const majorityIsAgree =
             agreePercentage >= 50;
 
-
         const userIsWithMajority =
             (
                 userVote === "agree"
-            ) === majorityIsAgree;
+            ) ===
+            majorityIsAgree;
 
 
         if (userIsWithMajority) {
@@ -660,186 +586,17 @@ async function showResults(
     }
 
 
-    nextButton.classList.remove(
+    /* =================================
+       SHOW
+    ================================= */
+
+    results.classList.remove(
         "hidden"
     );
 
-}
-
-
-/* =====================================
-   DONUT ANIMATION
-===================================== */
-
-function animateDonut(
-    percentage
-) {
-
-    if (!agreeCircle)
-        return;
-
-
-    const circumference =
-        2 *
-        Math.PI *
-        78;
-
-
-    const targetOffset =
-        circumference -
-        (
-            percentage / 100
-        ) *
-        circumference;
-
-
-    /*
-       Start from empty.
-    */
-
-    agreeCircle.style.transition =
-        "none";
-
-
-    agreeCircle.style.strokeDasharray =
-        circumference;
-
-
-    agreeCircle.style.strokeDashoffset =
-        circumference;
-
-
-    /*
-       Force browser to
-       register the reset.
-    */
-
-    void agreeCircle.offsetWidth;
-
-
-    /*
-       Animate clockwise.
-    */
-
-    agreeCircle.style.transition =
-        "stroke-dashoffset 1.25s cubic-bezier(0.22, 1, 0.36, 1)";
-
-
-    agreeCircle.style.strokeDashoffset =
-        targetOffset;
-
-}
-
-
-/* =====================================
-   PERCENTAGE NUMBER ANIMATION
-===================================== */
-
-function animatePercentage(
-    element,
-    target
-) {
-
-    const duration = 1000;
-
-    const startTime =
-        performance.now();
-
-
-    function update(
-        currentTime
-    ) {
-
-        const elapsed =
-            currentTime -
-            startTime;
-
-
-        const progress =
-            Math.min(
-                elapsed / duration,
-                1
-            );
-
-
-        /*
-           Smooth ease-out.
-        */
-
-        const eased =
-            1 -
-            Math.pow(
-                1 - progress,
-                3
-            );
-
-
-        const current =
-            Math.round(
-                eased * target
-            );
-
-
-        element.textContent =
-            `${current}%`;
-
-
-        if (progress < 1) {
-
-            requestAnimationFrame(
-                update
-            );
-
-        }
-
-    }
-
-
-    requestAnimationFrame(
-        update
+    nextButton.classList.remove(
+        "hidden"
     );
-
-}
-
-
-/* =====================================
-   RESET DONUT
-===================================== */
-
-function resetDonut() {
-
-    if (!agreeCircle)
-        return;
-
-
-    const circumference =
-        2 *
-        Math.PI *
-        78;
-
-
-    agreeCircle.style.transition =
-        "none";
-
-
-    agreeCircle.style.strokeDasharray =
-        circumference;
-
-
-    agreeCircle.style.strokeDashoffset =
-        circumference;
-
-
-    agreePercent.textContent =
-        "0%";
-
-
-    agreePercentSmall.textContent =
-        "0%";
-
-
-    disagreePercent.textContent =
-        "0%";
 
 }
 
@@ -863,18 +620,15 @@ const loginButton =
         "loginButton"
     );
 
-
 const loginModal =
     document.getElementById(
         "loginModal"
     );
 
-
 const closeLogin =
     document.getElementById(
         "closeLogin"
     );
-
 
 const googleButton =
     document.getElementById(
@@ -960,18 +714,15 @@ const usernameModal =
         "usernameModal"
     );
 
-
 const usernameInput =
     document.getElementById(
         "usernameInput"
     );
 
-
 const usernameButton =
     document.getElementById(
         "usernameButton"
     );
-
 
 const usernameError =
     document.getElementById(
@@ -984,7 +735,6 @@ function askForUsername() {
     usernameModal.classList.remove(
         "hidden"
     );
-
 
     setTimeout(() => {
 
@@ -1021,7 +771,6 @@ async function createUsername() {
 
     const username =
         usernameInput.value.trim();
-
 
     usernameError.textContent =
         "";
@@ -1117,7 +866,6 @@ async function createUsername() {
 
         }
 
-
         return;
 
     }
@@ -1126,15 +874,12 @@ async function createUsername() {
     profile =
         data;
 
-
     usernameInput.value =
         "";
-
 
     usernameModal.classList.add(
         "hidden"
     );
-
 
     updateLoginButton();
 
@@ -1163,18 +908,15 @@ const leaderboardButton =
         "leaderboardButton"
     );
 
-
 const leaderboardModal =
     document.getElementById(
         "leaderboardModal"
     );
 
-
 const closeLeaderboard =
     document.getElementById(
         "closeLeaderboard"
     );
-
 
 const leaderboardList =
     document.getElementById(
@@ -1189,7 +931,6 @@ leaderboardButton.addEventListener(
         leaderboardModal.classList.remove(
             "hidden"
         );
-
 
         await loadLeaderboard();
 
@@ -1227,7 +968,8 @@ async function loadLeaderboard() {
             .order(
                 "questions_answered",
                 {
-                    ascending: false
+                    ascending:
+                        false
                 }
             )
             .limit(50);
@@ -1239,7 +981,6 @@ async function loadLeaderboard() {
             "Leaderboard error:",
             error
         );
-
 
         leaderboardList.textContent =
             "Couldn't load leaderboard.";
@@ -1274,7 +1015,6 @@ async function loadLeaderboard() {
                     "div"
                 );
 
-
             item.className =
                 "leaderboardItem";
 
@@ -1288,12 +1028,10 @@ async function loadLeaderboard() {
             )
                 rank = "🥇";
 
-
             if (
                 index === 1
             )
                 rank = "🥈";
-
 
             if (
                 index === 2
@@ -1339,12 +1077,10 @@ const userModal =
         "userModal"
     );
 
-
 const closeUser =
     document.getElementById(
         "closeUser"
     );
-
 
 const logoutButton =
     document.getElementById(
@@ -1395,16 +1131,13 @@ logoutButton.addEventListener(
 
         await db.auth.signOut();
 
-
         user = null;
 
         profile = null;
 
-
         userModal.classList.add(
             "hidden"
         );
-
 
         updateLoginButton();
 
@@ -1416,19 +1149,15 @@ logoutButton.addEventListener(
    ESCAPE HTML
 ===================================== */
 
-function escapeHtml(
-    text
-) {
+function escapeHtml(text) {
 
     const div =
         document.createElement(
             "div"
         );
 
-
     div.textContent =
         text;
-
 
     return div.innerHTML;
 
